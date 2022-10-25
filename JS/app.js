@@ -6,21 +6,28 @@ class UserInterface {
         this.ctx = this.canvas.getContext('2d');
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
+        this.menuSound = new Audio;
+        this.menuSound.src = 'Audio/beep.wav';
+        this.menuIcon = document.getElementById('menu-icon');
+        this.gameMenu = document.getElementById('game-menu');
+        this.closeMenuBtn = document.getElementById('close-menu-button');
+        this.exitGameBtn = document.getElementById('exit-game-button');
     }
 }
 
 class PlayerClass {
     constructor() {
-        this.shipImage = new Image(200, 100);
-        this.shipImage.src = 'Images/shipv1.png';
-        this.width = 200;
-        this.height = 100;
+        this.shipImage = new Image(255, 80);
+        this.shipImage.src = 'Images/playerShip.png';
+        this.width = 255;
+        this.height = 80;
         this.x = 0;
         this.y = ui.canvas.height - this.height;
         this.health = 100;
         this.healthStat = 100;
         this.firedProjectiles = [];
-        this.cannonAngle = 2;
+        this.weaponChoice = JSON.stringify(localStorage.getItem('weaponChoice')) || 'Cannon';
+        this.cannonAngle = 1;
         this.cannonImageArray = ['Images/Cannon/cannonLeft.png', 'Images/Cannon/cannonUpLeft.png', 'Images/Cannon/cannonUp.png', 'Images/Cannon/cannonUpRight.png', 'Images/Cannon/cannonRight.png'];
         this.cannonImage = new Image(100, 64);
         this.cannonImage.src = this.cannonImageArray[this.cannonAngle];
@@ -31,7 +38,7 @@ class PlayerClass {
         ui.ctx.drawImage(this.shipImage, this.x, this.y, this.width, this.height);
     }
     DrawCannon() {
-        ui.ctx.drawImage(this.cannonImage, this.x + 60, this.y - 20, this.cannonWidth, this.cannonHeight);
+        ui.ctx.drawImage(this.cannonImage, this.x + 95, this.y - 50, this.cannonWidth, this.cannonHeight);
     }
     MoveShip(direction) {
         if(direction === 'ArrowLeft') {
@@ -74,7 +81,6 @@ class EventListeners {
         this.keyEvent = document.addEventListener('keydown', (event) => {
             if(event.code === 'ArrowLeft' || event.code === 'ArrowRight') {
                 player.MoveShip(event.code);
-                player.health -= 1;
             } else if(event.code === 'KeyW') {
                 const box = new Projectile;
                 player.firedProjectiles.push(box);
@@ -89,28 +95,38 @@ class EventListeners {
                     player.cannonAngle += 1;
                     player.cannonImage.src = player.cannonImageArray[player.cannonAngle];
                 }
+            } else if(event.code === 'KeyM') {
+                ui.gameMenu.showModal();
             }
+        });
+        this.openMenu = ui.menuIcon.addEventListener('click', () => {
+            ui.menuSound.play().catch((error) => {console.error(error)});
+            ui.gameMenu.showModal();
+        });
+        this.closeMenu = ui.closeMenuBtn.addEventListener('click', () => {
+            ui.gameMenu.close();
+        });
+        this.exitGame = ui.exitGameBtn.addEventListener('click', () => {
+            location.href = './index.html';
         });
     }
 }
 
 class Projectile {
     constructor() {
-        this.width = 10;
-        this.height = 10;
-        this.x = player.x + 100;
-        this.y = player.y + 10;
+        this.width = 20;
+        this.height = 16;
+        this.x = player.x + 120;
+        this.y = player.y - 10;
         this.projectileAnglesX = [-5, -5, 0, 5, 5];
         this.projectileAnglesY = [0, 5, 5, 5, 0];
         this.projecttileAdjust = player.cannonAngle;
+        this.shellImageArray = ['Images/Cannon/shellLeft.png', 'Images/Cannon/shellUpLeft.png', 'Images/Cannon/shellUp.png', 'Images/Cannon/shellUpRight.png', 'Images/Cannon/shellRight.png'];
+        this.shellImage = new Image(20, 16);
+        this.shellImage.src = this.shellImageArray[player.cannonAngle];
     }
     Draw() {
-        ui.ctx.beginPath();
-        ui.ctx.strokeStyle = 'red';
-        ui.ctx.fillStyle = 'black';
-        ui.ctx.rect(this.x, this.y, this.width, this.height);
-        ui.ctx.fill();
-        ui.ctx.stroke();
+        ui.ctx.drawImage(this.shellImage, this.x, this.y, this.width, this.height);
     }
     UpdatePosition() {
         this.x += this.projectileAnglesX[this.projecttileAdjust];
@@ -130,14 +146,16 @@ const healthBar = new PlayerHealthBar;
 const events = new EventListeners;
 
 function animationLoop() {
-    ui.ctx.clearRect(0, 0, ui.canvas.width, ui.canvas.height);
-    player.DrawShip();
-    player.DrawCannon();
-    healthBar.Draw();
-    player.firedProjectiles.forEach((box) => {
-        box.UpdatePosition();
-        box.Draw();
-    })
+    if(!ui.gameMenu.open) {
+        ui.ctx.clearRect(0, 0, ui.canvas.width, ui.canvas.height);
+        player.DrawCannon();
+        player.DrawShip();
+        healthBar.Draw();
+        player.firedProjectiles.forEach((box) => {
+            box.UpdatePosition();
+            box.Draw();
+        });
+    }
     requestAnimationFrame(animationLoop);
 }
 animationLoop();
