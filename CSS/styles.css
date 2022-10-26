@@ -1,0 +1,25 @@
+body {
+    margin: 0;
+    background-color: lightblue;
+}
+
+#canvas {
+    position: absolute;
+    z-index: 1;
+}
+
+#menu-icon {
+    width: 30px;
+    height: 30px;
+    background-image: url('../Images/menu-icon.png');
+    background-size: cover;
+    background-position: center;
+    position: fixed;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 2;
+}
+
+#menu-icon:hover, #menu-icon:focus {
+    border: 3px solid rgb(14, 14, 82);
+}
