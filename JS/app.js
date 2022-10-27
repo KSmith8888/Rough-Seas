@@ -1,4 +1,4 @@
-'use strict';
+import { generator }  from './Enemies.js';
 
 class UserInterface {
     constructor() {
@@ -85,7 +85,6 @@ class EventListeners {
             if(event.code === 'KeyW') {
                 const box = new Projectile;
                 player.firedProjectiles.push(box);
-                console.log(player.firedProjectiles)
             } 
             if(event.code === 'KeyA') {
                 if(player.cannonAngle > 0) {
@@ -100,6 +99,7 @@ class EventListeners {
                 }
             } 
             if(event.code === 'KeyM') {
+                ui.menuSound.play().catch((error) => {console.error(error)});
                 ui.gameMenu.showModal();
             }
         });
@@ -138,7 +138,6 @@ class Projectile {
         player.firedProjectiles.forEach((projectile, index) => {
             if(projectile.x > ui.canvas.width || projectile.x < 0 || projectile.y < 0 || projectile.y > ui.canvas.height) {
                player.firedProjectiles.splice(index, 1);
-               console.log(player.firedProjectiles);
             }
         });
     }
@@ -164,18 +163,27 @@ const healthBar = new PlayerHealthBar;
 const events = new EventListeners;
 const water = new OceanSurface;
 
+
 function animationLoop() {
     if(!ui.gameMenu.open) {
         ui.ctx.clearRect(0, 0, ui.canvas.width, ui.canvas.height);
         player.DrawCannon();
         player.DrawShip();
+        generator.SmallEnemy1Array.forEach((ship) => {
+            ship.Draw();
+            ship.UpdatePosition();
+            ship.Hit();
+        });
+        generator.Collision();
         water.Draw();
         healthBar.Draw();
-        player.firedProjectiles.forEach((box) => {
-            box.UpdatePosition();
-            box.Draw();
+        player.firedProjectiles.forEach((projectile) => {
+            projectile.UpdatePosition();
+            projectile.Draw();
         });
     }
     requestAnimationFrame(animationLoop);
 }
 animationLoop();
+
+export { player, ui };
