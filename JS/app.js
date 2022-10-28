@@ -47,6 +47,7 @@ class PlayerClass {
             this.x += 5;
         }
     }
+   
 }
 
 class PlayerHealthBar {
@@ -82,7 +83,7 @@ class EventListeners {
             if(event.code === 'ArrowLeft' || event.code === 'ArrowRight') {
                 player.MoveShip(event.code);
             } 
-            if(event.code === 'KeyW') {
+            if(event.code === 'KeyW' && player.firedProjectiles.length < 5) {
                 const box = new Projectile;
                 player.firedProjectiles.push(box);
             } 
@@ -169,12 +170,16 @@ function animationLoop() {
         ui.ctx.clearRect(0, 0, ui.canvas.width, ui.canvas.height);
         player.DrawCannon();
         player.DrawShip();
-        generator.SmallEnemy1Array.forEach((ship) => {
+        generator.EnemyArray.forEach((ship) => {
             ship.Draw();
             ship.UpdatePosition();
             ship.Hit();
         });
         generator.Collision();
+        generator.LaserArray.forEach((laser) => {
+            laser.Draw();
+            laser.UpdatePosition();
+        });
         water.Draw();
         healthBar.Draw();
         player.firedProjectiles.forEach((projectile) => {
