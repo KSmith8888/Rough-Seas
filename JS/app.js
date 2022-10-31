@@ -1,4 +1,5 @@
 import { generator }  from './Enemies.js';
+import { Shell, Bullet } from './Projectiles.js';
 
 class UserInterface {
     constructor() {
@@ -25,20 +26,30 @@ class PlayerClass {
         this.y = ui.canvas.height - this.height;
         this.health = 100;
         this.healthStat = 100;
+        this.enemiesDestroyed = 0;
         this.firedProjectiles = [];
-        this.weaponChoice = JSON.stringify(localStorage.getItem('weaponChoice')) || 'Cannon';
-        this.cannonAngle = 1;
+        this.weaponChoice = 'Cannon';
+        this.weaponAngle = 1;
+        this.weaponWidth = 100;
+        this.weaponHeight = 64;
         this.cannonImageArray = ['Images/Cannon/cannonLeft.png', 'Images/Cannon/cannonUpLeft.png', 'Images/Cannon/cannonUp.png', 'Images/Cannon/cannonUpRight.png', 'Images/Cannon/cannonRight.png'];
         this.cannonImage = new Image(100, 64);
-        this.cannonImage.src = this.cannonImageArray[this.cannonAngle];
-        this.cannonWidth = 100;
-        this.cannonHeight = 64;
+        this.cannonImage.src = this.cannonImageArray[this.weaponAngle];
+        this.machineImageArray = ['Images/Machine/machineLeft.png', 'Images/Machine/machineUpLeft.png', 'Images/Machine/machineUp.png', 'Images/Machine/machineUpRight.png', 'Images/Machine/machineRight.png'];
+        this.machineImage = new Image(100, 64);
+        this.machineImage.src = this.machineImageArray[this.weaponAngle];
     }
     DrawShip() {
         ui.ctx.drawImage(this.shipImage, this.x, this.y, this.width, this.height);
     }
-    DrawCannon() {
-        ui.ctx.drawImage(this.cannonImage, this.x + 95, this.y - 55, this.cannonWidth, this.cannonHeight);
+    DrawWeapon() {
+        if(this.weaponChoice === 'Cannon') {
+            ui.ctx.drawImage(this.cannonImage, this.x + 95, this.y - 55, this.weaponWidth, this.weaponHeight);
+        } else if(this.weaponChoice === 'Rocket') {
+         
+        } else if(this.weaponChoice === 'Machine') {
+            ui.ctx.drawImage(this.machineImage, this.x + 95, this.y - 55, this.weaponWidth, this.weaponHeight);
+        }
     }
     MoveShip(direction) {
         if(direction === 'ArrowLeft') {
@@ -47,7 +58,16 @@ class PlayerClass {
             this.x += 5;
         }
     }
-   
+    ChooseWeapon() {
+        localStorage.setItem('weaponChoice', JSON.stringify('Machine'))
+        if(JSON.parse(localStorage.getItem('weaponChoice')) === 'Rocket') {
+            this.weaponChoice = 'Rocket';
+        } else if(JSON.parse(localStorage.getItem('weaponChoice')) === 'Machine') {
+            this.weaponChoice = 'Machine';
+        } else if(JSON.parse(localStorage.getItem('weaponChoice')) === 'Cannon') {
+            this.weaponChoice = 'Cannon';
+        }
+    }
 }
 
 class PlayerHealthBar {
@@ -83,20 +103,29 @@ class EventListeners {
             if(event.code === 'ArrowLeft' || event.code === 'ArrowRight') {
                 player.MoveShip(event.code);
             } 
-            if(event.code === 'KeyW' && player.firedProjectiles.length < 5) {
-                const box = new Projectile;
-                player.firedProjectiles.push(box);
+            if(event.code === 'KeyW') {
+                if(player.weaponChoice === 'Cannon' && player.firedProjectiles.length < 5) {
+                    const shell = new Shell;
+                    player.firedProjectiles.push(shell);
+                } else if(player.weaponChoice === 'Rocket') {
+                    console.log('Fired Rocket')
+                } else if(player.weaponChoice === 'Machine' && player.firedProjectiles.length < 10) {
+                    const bullet = new Bullet;
+                    player.firedProjectiles.push(bullet);
+                }
             } 
             if(event.code === 'KeyA') {
-                if(player.cannonAngle > 0) {
-                    player.cannonAngle -= 1;
-                    player.cannonImage.src = player.cannonImageArray[player.cannonAngle];
+                if(player.weaponAngle > 0) {
+                    player.weaponAngle -= 1;
+                    player.cannonImage.src = player.cannonImageArray[player.weaponAngle];
+                    player.machineImage.src = player.machineImageArray[player.weaponAngle];
                 }
             } 
             if(event.code === 'KeyD') {
-                if(player.cannonAngle < (player.cannonImageArray.length - 1)) {
-                    player.cannonAngle += 1;
-                    player.cannonImage.src = player.cannonImageArray[player.cannonAngle];
+                if(player.weaponAngle < (player.cannonImageArray.length - 1)) {
+                    player.weaponAngle += 1;
+                    player.cannonImage.src = player.cannonImageArray[player.weaponAngle];
+                    player.machineImage.src = player.machineImageArray[player.weaponAngle];
                 }
             } 
             if(event.code === 'KeyM') {
@@ -117,33 +146,6 @@ class EventListeners {
     }
 }
 
-class Projectile {
-    constructor() {
-        this.width = 20;
-        this.height = 16;
-        this.x = player.x + 120;
-        this.y = player.y - 10;
-        this.projectileAnglesX = [-5, -5, 0, 5, 5];
-        this.projectileAnglesY = [0, 5, 5, 5, 0];
-        this.projecttileAdjust = player.cannonAngle;
-        this.shellImageArray = ['Images/Cannon/shellLeft.png', 'Images/Cannon/shellUpLeft.png', 'Images/Cannon/shellUp.png', 'Images/Cannon/shellUpRight.png', 'Images/Cannon/shellRight.png'];
-        this.shellImage = new Image(20, 16);
-        this.shellImage.src = this.shellImageArray[player.cannonAngle];
-    }
-    Draw() {
-        ui.ctx.drawImage(this.shellImage, this.x, this.y, this.width, this.height);
-    }
-    UpdatePosition() {
-        this.x += this.projectileAnglesX[this.projecttileAdjust];
-        this.y -= this.projectileAnglesY[this.projecttileAdjust];
-        player.firedProjectiles.forEach((projectile, index) => {
-            if(projectile.x > ui.canvas.width || projectile.x < 0 || projectile.y < 0 || projectile.y > ui.canvas.height) {
-               player.firedProjectiles.splice(index, 1);
-            }
-        });
-    }
-}
-
 class OceanSurface {
     constructor() {
         this.width = ui.canvas.width;
@@ -155,20 +157,28 @@ class OceanSurface {
     }
     Draw() {
         ui.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+        ui.ctx.drawImage(this.image, (this.x + this.width), this.y, this.width, this.height);
+    }
+    UpdatePosition() {
+        if(this.x > (0 - ui.canvas.width)) {
+            this.x -= 1;
+        }else {
+            this.x = 0;
+        }
     }
 }
 
 const ui = new UserInterface;
 const player = new PlayerClass;
+player.ChooseWeapon();
 const healthBar = new PlayerHealthBar;
 const events = new EventListeners;
 const water = new OceanSurface;
 
-
 function animationLoop() {
     if(!ui.gameMenu.open) {
         ui.ctx.clearRect(0, 0, ui.canvas.width, ui.canvas.height);
-        player.DrawCannon();
+        player.DrawWeapon();
         player.DrawShip();
         generator.EnemyArray.forEach((ship) => {
             ship.Draw();
@@ -176,11 +186,13 @@ function animationLoop() {
             ship.Hit();
         });
         generator.Collision();
+        generator.AddFinalBoss();
         generator.LaserArray.forEach((laser) => {
             laser.Draw();
             laser.UpdatePosition();
         });
         water.Draw();
+        water.UpdatePosition();
         healthBar.Draw();
         player.firedProjectiles.forEach((projectile) => {
             projectile.UpdatePosition();
