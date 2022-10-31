@@ -1,19 +1,5 @@
 import { ui, player } from './app.js';
-
-class LaserShot {
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-        this.image = new Image(8, 14);
-        this.image.src = 'Images/Enemies/smallLaser.png';
-    }
-    Draw() {
-        ui.ctx.drawImage(this.image, this.x, this.y, 8, 14);
-    }
-    UpdatePosition() {
-        this.y += 2;
-    }
-}
+import { SmallLaserShot, LargeLaserShot} from './Projectiles.js';
 
 class SmallEnemy1 {
     constructor() {
@@ -52,6 +38,7 @@ class SmallEnemy1 {
                 projectile.y < (this.y + this.height)
                 ) {
                     this.destroyed = true;
+                    player.enemiesDestroyed += 1;
                 }
         });
     }
@@ -71,7 +58,7 @@ class SmallEnemy2 {
         this.randomYNumber = Math.floor(Math.random() * 30);
         this.fireLaser = setInterval(() => {
             if(!this.destroyed && !ui.gameMenu.open) {
-                generator.LaserArray.push(new LaserShot(this.x, this.y));
+                generator.LaserArray.push(new SmallLaserShot(this.x, this.y));
             }
         }, 5000);
     }
@@ -97,6 +84,60 @@ class SmallEnemy2 {
                 projectile.y < (this.y + this.height)
                 ) {
                     this.destroyed = true;
+                    player.enemiesDestroyed += 1;
+                }
+        });
+    }
+}
+
+class LargeEnemy1 {
+    constructor() {
+        this.enemyType = 'Large Enemy 1';
+        this.health = 50;
+        this.width = 50;
+        this.height = 60;
+        this.x = Math.floor(Math.random() * ui.canvas.width);
+        this.y = 0;
+        this.image = new Image(50, 60);
+        this.image.src = 'Images/Enemies/largeEnemy1.png';
+        this.destroyed = false;
+        this.randomXNumber = Math.floor(Math.random() * 250);
+        this.randomYNumber = Math.floor(Math.random() * 30);
+        this.fireLaser = setInterval(() => {
+            if(!this.destroyed && !ui.gameMenu.open) {
+                generator.LaserArray.push(new LargeLaserShot(this.x, this.y + (this.height / 2)));
+                generator.LaserArray.push(new LargeLaserShot(this.x + 45, this.y + (this.height / 2)));
+            }
+        }, 5000);
+    }
+    Draw() {
+        ui.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+    }
+    UpdatePosition() {
+        if(this.x < player.x + this.randomXNumber) {
+            this.x += 1;
+        } else {
+            this.x -= 1;
+        }
+        if(this.y < (40 + this.randomYNumber)) {
+            this.y += 2;
+        }
+    }
+    Hit() {
+        player.firedProjectiles.forEach((projectile) => {
+            if(
+                (projectile.x + projectile.width) >= this.x && 
+                projectile.x < (this.x + this.width) &&
+                (projectile.y + projectile.height) >= this.y &&
+                projectile.y < (this.y + this.height) &&
+                projectile.hit === false
+                ) {
+                    projectile.hit = true;
+                    this.health -= projectile.damage;
+                    if(this.health <= 0) {
+                        this.destroyed = true;
+                        player.enemiesDestroyed += 1;
+                    }
                 }
         });
     }
@@ -106,6 +147,7 @@ class EnemyGenerator {
     constructor() {
         this.EnemyArray = [];
         this.LaserArray = [];
+        this.finalBossReleased = false;
         this.addSmallEnemy1 = setInterval(() => {
             if(this.EnemyArray.length < 15 && !ui.gameMenu.open) {
                 this.EnemyArray.push(new SmallEnemy1);
@@ -138,6 +180,11 @@ class EnemyGenerator {
                     this.EnemyArray.splice(index, 1);
                 }
             }
+            if(ship.enemyType === 'Large Enemy 1') {
+                if(ship.destroyed) {
+                    this.EnemyArray.splice(index, 1);
+                }
+            }
         });
         this.LaserArray.forEach((laser, index) => {
             if(
@@ -145,13 +192,21 @@ class EnemyGenerator {
                 laser.x < (player.x + player.width) &&
                 laser.y > (ui.canvas.height - player.height)
                 ) {
-                    player.health -= 10;
+                    player.health -= laser.damage;
                     this.LaserArray.splice(index, 1);
             }
             if(laser.y >= canvas.height) {
                 this.LaserArray.splice(index, 1);
             }
         })
+    }
+    AddFinalBoss() {
+        if(player.enemiesDestroyed >= 10 && !ui.gameMenu.open && this.finalBossReleased === false) {
+            this.finalBossReleased = true;
+            clearInterval(this.addSmallEnemy1);
+            clearInterval(this.addSmallEnemy2);
+            this.EnemyArray.push(new LargeEnemy1);
+        }
     }
 }
 
