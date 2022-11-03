@@ -1,11 +1,11 @@
 body {
     margin: 0;
-    background-color: lightblue;
 }
 
 #canvas {
     position: absolute;
     z-index: 1;
+    background: linear-gradient(lightblue, rgb(127, 127, 233));
 }
 
 #menu-icon {
