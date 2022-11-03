@@ -1,5 +1,6 @@
 import { generator }  from './Enemies.js';
 import { Shell, Bullet } from './Projectiles.js';
+import { cloudGenerator, OceanSurface, skyline } from './Background.js';
 
 class UserInterface {
     constructor() {
@@ -22,7 +23,7 @@ class PlayerClass {
         this.shipImage.src = 'Images/playerShipV3.png';
         this.width = 255;
         this.height = 80;
-        this.x = 0;
+        this.x = 250;
         this.y = ui.canvas.height - this.height;
         this.health = 100;
         this.healthStat = 100;
@@ -59,7 +60,7 @@ class PlayerClass {
         }
     }
     ChooseWeapon() {
-        localStorage.setItem('weaponChoice', JSON.stringify('Machine'))
+        localStorage.setItem('weaponChoice', JSON.stringify('Cannon'))
         if(JSON.parse(localStorage.getItem('weaponChoice')) === 'Rocket') {
             this.weaponChoice = 'Rocket';
         } else if(JSON.parse(localStorage.getItem('weaponChoice')) === 'Machine') {
@@ -67,6 +68,12 @@ class PlayerClass {
         } else if(JSON.parse(localStorage.getItem('weaponChoice')) === 'Cannon') {
             this.weaponChoice = 'Cannon';
         }
+    }
+    ControlProjectiles() {
+        this.firedProjectiles.forEach((projectile) => {
+            projectile.UpdatePosition();
+            projectile.Draw();
+        });
     }
 }
 
@@ -146,58 +153,28 @@ class EventListeners {
     }
 }
 
-class OceanSurface {
-    constructor() {
-        this.width = ui.canvas.width;
-        this.height = 23;
-        this.x = 0;
-        this.y = ui.canvas.height - this.height;
-        this.image = new Image();
-        this.image.src = 'Images/oceanSurface.png';
-    }
-    Draw() {
-        ui.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
-        ui.ctx.drawImage(this.image, (this.x + this.width), this.y, this.width, this.height);
-    }
-    UpdatePosition() {
-        if(this.x > (0 - ui.canvas.width)) {
-            this.x -= 1;
-        }else {
-            this.x = 0;
-        }
-    }
-}
-
 const ui = new UserInterface;
+const water = new OceanSurface;
 const player = new PlayerClass;
 player.ChooseWeapon();
 const healthBar = new PlayerHealthBar;
 const events = new EventListeners;
-const water = new OceanSurface;
 
 function animationLoop() {
     if(!ui.gameMenu.open) {
         ui.ctx.clearRect(0, 0, ui.canvas.width, ui.canvas.height);
+        cloudGenerator.DrawClouds();
+        skyline.ControlSkyline();
         player.DrawWeapon();
         player.DrawShip();
-        generator.EnemyArray.forEach((ship) => {
-            ship.Draw();
-            ship.UpdatePosition();
-            ship.Hit();
-        });
+        generator.ControlEnemies();
         generator.Collision();
         generator.AddFinalBoss();
-        generator.LaserArray.forEach((laser) => {
-            laser.Draw();
-            laser.UpdatePosition();
-        });
-        water.Draw();
-        water.UpdatePosition();
+        generator.ControlLasers();
+        generator.ControlExplosions();
+        water.ControlWater();
         healthBar.Draw();
-        player.firedProjectiles.forEach((projectile) => {
-            projectile.UpdatePosition();
-            projectile.Draw();
-        });
+        player.ControlProjectiles();
     }
     requestAnimationFrame(animationLoop);
 }
