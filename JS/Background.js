@@ -46,10 +46,14 @@ class Clouds {
     constructor() {
         this.cloudArray = [];
         this.addCloud1 = setInterval(() => {
-            this.cloudArray.push(new Cloud1(ui.canvas.width, Math.floor(Math.random() * ui.canvas.height) - 250));
+            if(this.cloudArray.length < 12) {
+                this.cloudArray.push(new Cloud1(ui.canvas.width, Math.floor(Math.random() * 350)));
+            }
         }, 15000);
-        this.addCloud1 = setInterval(() => {
-            this.cloudArray.push(new Cloud1(ui.canvas.width, Math.floor(Math.random() * ui.canvas.height) - 350));
+        this.addCloud2 = setInterval(() => {
+            if(this.cloudArray.length < 12) {
+                this.cloudArray.push(new Cloud2(ui.canvas.width, Math.floor(Math.random() * 250)));
+            }
         }, 20000);
     }
     DrawClouds() {
@@ -63,18 +67,40 @@ class Clouds {
         });
     }
     AddInitialClouds() {
-        this.cloudArray.push(new Cloud1(100, 150));
-        this.cloudArray.push(new Cloud1(700, 350));
-        this.cloudArray.push(new Cloud1(500, 225));
-        this.cloudArray.push(new Cloud2(400, 50));
-        this.cloudArray.push(new Cloud2(900, 200));
+        this.cloudArray.push(new Cloud1(200, 150));
+        this.cloudArray.push(new Cloud1(800, 250));
+        this.cloudArray.push(new Cloud1(600, 75));
+        this.cloudArray.push(new Cloud2(350, 175));
+        this.cloudArray.push(new Cloud2(1000, 50));
+    }
+}
+
+class CitySkyline {
+    constructor() {
+        this.image = new Image(264, 157);
+        this.image.src = 'Images/citySkyline.png';
+        this.x = 0;
+        this.width = 264;
+        this.height = 157;
+    }
+    Draw() {
+        ui.ctx.drawImage(this.image, this.x, ui.canvas.height - 150, this.width, this.height);
+    }
+    UpdatePosition() {
+        this.x -= .05;
+    }
+    ControlSkyline() {
+        if((this.x + this.width) > 0) {
+            this.Draw();
+            this.UpdatePosition();
+        }
     }
 }
 
 class OceanSurface {
     constructor() {
         this.width = ui.canvas.width;
-        this.height = 23;
+        this.height = 27;
         this.x = 0;
         this.y = ui.canvas.height - this.height;
         this.image = new Image();
@@ -91,9 +117,14 @@ class OceanSurface {
             this.x = 0;
         }
     }
+    ControlWater() {
+        this.Draw();
+        this.UpdatePosition();
+    }
 }
 
 const cloudGenerator = new Clouds;
 cloudGenerator.AddInitialClouds();
+const skyline = new CitySkyline;
 
-export { cloudGenerator, OceanSurface };
+export { cloudGenerator, OceanSurface, skyline };
