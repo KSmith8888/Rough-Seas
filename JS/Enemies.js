@@ -1,5 +1,5 @@
 import { ui, player } from './app.js';
-import { SmallLaserShot, LargeLaserShot} from './Projectiles.js';
+import { SmallLaserShot, LargeLaserShot, SmallExplosion} from './Projectiles.js';
 
 class SmallEnemy1 {
     constructor() {
@@ -38,6 +38,7 @@ class SmallEnemy1 {
                 projectile.y < (this.y + this.height)
                 ) {
                     this.destroyed = true;
+                    generator.explosionArray.push(new SmallExplosion(this.x, this.y));
                     player.enemiesDestroyed += 1;
                 }
         });
@@ -84,6 +85,7 @@ class SmallEnemy2 {
                 projectile.y < (this.y + this.height)
                 ) {
                     this.destroyed = true;
+                    generator.explosionArray.push(new SmallExplosion(this.x, this.y));
                     player.enemiesDestroyed += 1;
                 }
         });
@@ -134,6 +136,7 @@ class LargeEnemy1 {
                 ) {
                     projectile.hit = true;
                     this.health -= projectile.damage;
+                    generator.explosionArray.push(new SmallExplosion(this.x, this.y));
                     if(this.health <= 0) {
                         this.destroyed = true;
                         player.enemiesDestroyed += 1;
@@ -147,6 +150,7 @@ class EnemyGenerator {
     constructor() {
         this.EnemyArray = [];
         this.LaserArray = [];
+        this.explosionArray = [];
         this.finalBossReleased = false;
         this.addSmallEnemy1 = setInterval(() => {
             if(this.EnemyArray.length < 15 && !ui.gameMenu.open) {
@@ -168,10 +172,9 @@ class EnemyGenerator {
                     ship.y > (ui.canvas.height - player.height)
                     ) {
                         player.health -= 20;
+                        this.explosionArray.push(new SmallExplosion(ship.x, ship.y));
                         this.EnemyArray.splice(index, 1);
-                } else if(ship.y === ui.canvas.height) {
-                    this.EnemyArray.splice(index, 1);
-                } else if(ship.destroyed) {
+                } else if(ship.y === ui.canvas.height || ship.destroyed) {
                     this.EnemyArray.splice(index, 1);
                 }
             }
@@ -193,6 +196,7 @@ class EnemyGenerator {
                 laser.y > (ui.canvas.height - player.height)
                 ) {
                     player.health -= laser.damage;
+                    this.explosionArray.push(new SmallExplosion(laser.x, laser.y));
                     this.LaserArray.splice(index, 1);
             }
             if(laser.y >= canvas.height) {
@@ -207,6 +211,28 @@ class EnemyGenerator {
             clearInterval(this.addSmallEnemy2);
             this.EnemyArray.push(new LargeEnemy1);
         }
+    }
+    ControlEnemies() {
+        this.EnemyArray.forEach((ship) => {
+            ship.Draw();
+            ship.UpdatePosition();
+            ship.Hit();
+        });
+    }
+    ControlLasers() {
+        this.LaserArray.forEach((laser) => {
+            laser.Draw();
+            laser.UpdatePosition();
+        });
+    }
+    ControlExplosions() {
+        this.explosionArray.forEach((explosion, index) => {
+            if(explosion.activeFrames < 10) {
+                explosion.Draw();
+            } else {
+                this.explosionArray.splice(index, 1);
+            }
+        })
     }
 }
 
