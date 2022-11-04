@@ -19,38 +19,22 @@ class UserInterface {
 
 class PlayerClass {
     constructor() {
-        this.shipImage = new Image(255, 80);
-        this.shipImage.src = 'Images/playerShipV3.png';
         this.width = 255;
         this.height = 80;
-        this.x = 250;
+        this.x = 500;
         this.y = ui.canvas.height - this.height;
-        this.health = 100;
+        this.gameLevel = 1;
         this.healthStat = 100;
+        this.damageStat = 5;
+        this.health = 100;
+        this.weaponChoice = 'Cannon';
         this.enemiesDestroyed = 0;
         this.firedProjectiles = [];
-        this.weaponChoice = 'Cannon';
-        this.weaponAngle = 1;
-        this.weaponWidth = 100;
-        this.weaponHeight = 64;
-        this.cannonImageArray = ['Images/Cannon/cannonLeft.png', 'Images/Cannon/cannonUpLeft.png', 'Images/Cannon/cannonUp.png', 'Images/Cannon/cannonUpRight.png', 'Images/Cannon/cannonRight.png'];
-        this.cannonImage = new Image(100, 64);
-        this.cannonImage.src = this.cannonImageArray[this.weaponAngle];
-        this.machineImageArray = ['Images/Machine/machineLeft.png', 'Images/Machine/machineUpLeft.png', 'Images/Machine/machineUp.png', 'Images/Machine/machineUpRight.png', 'Images/Machine/machineRight.png'];
-        this.machineImage = new Image(100, 64);
-        this.machineImage.src = this.machineImageArray[this.weaponAngle];
+        this.image = new Image(255, 80);
+        this.image.src = 'Images/playerShipV3.png';
     }
     DrawShip() {
-        ui.ctx.drawImage(this.shipImage, this.x, this.y, this.width, this.height);
-    }
-    DrawWeapon() {
-        if(this.weaponChoice === 'Cannon') {
-            ui.ctx.drawImage(this.cannonImage, this.x + 95, this.y - 55, this.weaponWidth, this.weaponHeight);
-        } else if(this.weaponChoice === 'Rocket') {
-         
-        } else if(this.weaponChoice === 'Machine') {
-            ui.ctx.drawImage(this.machineImage, this.x + 95, this.y - 55, this.weaponWidth, this.weaponHeight);
-        }
+        ui.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
     }
     MoveShip(direction) {
         if(direction === 'ArrowLeft') {
@@ -59,21 +43,25 @@ class PlayerClass {
             this.x += 5;
         }
     }
-    ChooseWeapon() {
-        localStorage.setItem('weaponChoice', JSON.stringify('Cannon'))
-        if(JSON.parse(localStorage.getItem('weaponChoice')) === 'Rocket') {
-            this.weaponChoice = 'Rocket';
-        } else if(JSON.parse(localStorage.getItem('weaponChoice')) === 'Machine') {
-            this.weaponChoice = 'Machine';
-        } else if(JSON.parse(localStorage.getItem('weaponChoice')) === 'Cannon') {
-            this.weaponChoice = 'Cannon';
-        }
-    }
     ControlProjectiles() {
         this.firedProjectiles.forEach((projectile) => {
             projectile.UpdatePosition();
             projectile.Draw();
         });
+    }
+    LoadSaveData() {
+        localStorage.setItem('Weapon Choice', JSON.stringify('Machine'));
+        localStorage.setItem('Health Stat', JSON.stringify(120));
+        if(localStorage.getItem('Health Stat') !== null) {
+            this.healthStat = JSON.parse(localStorage.getItem('Health Stat'));
+            this.health = this.healthStat;
+        }
+        if(localStorage.getItem('Damage Stat') !== null) {
+            this.damageStat = JSON.parse(localStorage.getItem('Damage Stat'));
+        }
+        if(localStorage.getItem('Weapon Choice') !== null) {
+            this.weaponChoice = JSON.parse(localStorage.getItem('Weapon Choice'));
+        }
     }
 }
 
@@ -81,9 +69,9 @@ class PlayerHealthBar {
     constructor() {
         this.x = 40;
         this.y = 10;
-        this.width = 200;
         this.height = 15;
-        this.fill = 195;
+        this.width = player.healthStat * 2 - 5;
+        this.fill = player.health * 2 - 5;
     }
     Draw() {
         this.width = player.healthStat * 2 - 5;
@@ -101,6 +89,33 @@ class PlayerHealthBar {
         ui.ctx.stroke();
         ui.ctx.fillStyle = 'rgb(184, 29, 9)';
         ui.ctx.fillRect(this.x + 2, this.y + 2, this.fill, this.height - 4);
+    }
+}
+
+class WeaponClass {
+    constructor() {
+        this.x = player.x + 95;
+        this.y = player.y - 55;
+        this.width = 100;
+        this.height = 64;
+        this.weaponAngle = 1;
+        this.cannonImageArray = ['Images/Cannon/cannonLeft.png', 'Images/Cannon/cannonUpLeft.png', 'Images/Cannon/cannonUp.png', 'Images/Cannon/cannonUpRight.png', 'Images/Cannon/cannonRight.png'];
+        this.cannonImage = new Image(100, 64);
+        this.cannonImage.src = this.cannonImageArray[this.weaponAngle];
+        this.machineImageArray = ['Images/Machine/machineLeft.png', 'Images/Machine/machineUpLeft.png', 'Images/Machine/machineUp.png', 'Images/Machine/machineUpRight.png', 'Images/Machine/machineRight.png'];
+        this.machineImage = new Image(100, 64);
+        this.machineImage.src = this.machineImageArray[this.weaponAngle];
+    }
+    DrawWeapon() {
+        this.x = player.x + 95;
+        this.y = player.y - 55;
+        if(player.weaponChoice === 'Cannon') {
+            ui.ctx.drawImage(this.cannonImage, this.x, this.y, this.width, this.height);
+        } else if(player.weaponChoice === 'Rocket') {
+         
+        } else if(player.weaponChoice === 'Machine') {
+            ui.ctx.drawImage(this.machineImage, this.x, this.y, this.width, this.height);
+        }
     }
 }
 
@@ -122,17 +137,17 @@ class EventListeners {
                 }
             } 
             if(event.code === 'KeyA') {
-                if(player.weaponAngle > 0) {
-                    player.weaponAngle -= 1;
-                    player.cannonImage.src = player.cannonImageArray[player.weaponAngle];
-                    player.machineImage.src = player.machineImageArray[player.weaponAngle];
+                if(weapon.weaponAngle > 0) {
+                    weapon.weaponAngle -= 1;
+                    weapon.cannonImage.src = weapon.cannonImageArray[weapon.weaponAngle];
+                    weapon.machineImage.src = weapon.machineImageArray[weapon.weaponAngle];
                 }
             } 
             if(event.code === 'KeyD') {
-                if(player.weaponAngle < (player.cannonImageArray.length - 1)) {
-                    player.weaponAngle += 1;
-                    player.cannonImage.src = player.cannonImageArray[player.weaponAngle];
-                    player.machineImage.src = player.machineImageArray[player.weaponAngle];
+                if(weapon.weaponAngle < (weapon.cannonImageArray.length - 1)) {
+                    weapon.weaponAngle += 1;
+                    weapon.cannonImage.src = weapon.cannonImageArray[weapon.weaponAngle];
+                    weapon.machineImage.src = weapon.machineImageArray[weapon.weaponAngle];
                 }
             } 
             if(event.code === 'KeyM') {
@@ -156,7 +171,8 @@ class EventListeners {
 const ui = new UserInterface;
 const water = new OceanSurface;
 const player = new PlayerClass;
-player.ChooseWeapon();
+player.LoadSaveData();
+const weapon = new WeaponClass;
 const healthBar = new PlayerHealthBar;
 const events = new EventListeners;
 
@@ -165,7 +181,7 @@ function animationLoop() {
         ui.ctx.clearRect(0, 0, ui.canvas.width, ui.canvas.height);
         cloudGenerator.DrawClouds();
         skyline.ControlSkyline();
-        player.DrawWeapon();
+        weapon.DrawWeapon();
         player.DrawShip();
         generator.ControlEnemies();
         generator.Collision();
@@ -180,4 +196,4 @@ function animationLoop() {
 }
 animationLoop();
 
-export { player, ui };
+export { player, ui, weapon };
