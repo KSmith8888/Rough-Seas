@@ -139,6 +139,7 @@ class LargeEnemy1 {
                     generator.explosionArray.push(new SmallExplosion(this.x, this.y));
                     if(this.health <= 0) {
                         this.destroyed = true;
+                        generator.finalBossDestroyed = true;
                         player.enemiesDestroyed += 1;
                     }
                 }
@@ -152,6 +153,7 @@ class EnemyGenerator {
         this.LaserArray = [];
         this.explosionArray = [];
         this.finalBossReleased = false;
+        this.finalBossDestroyed = false;
         this.addSmallEnemy1 = setInterval(() => {
             if(this.EnemyArray.length < 15 && !ui.gameMenu.open) {
                 this.EnemyArray.push(new SmallEnemy1);
@@ -210,6 +212,11 @@ class EnemyGenerator {
             clearInterval(this.addSmallEnemy1);
             clearInterval(this.addSmallEnemy2);
             this.EnemyArray.push(new LargeEnemy1);
+        }
+        if(this.finalBossReleased) {
+            if(this.finalBossDestroyed) {
+                
+            }
         }
     }
     ControlEnemies() {
