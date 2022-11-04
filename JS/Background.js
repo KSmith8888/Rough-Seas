@@ -77,14 +77,14 @@ class Clouds {
 
 class CitySkyline {
     constructor() {
-        this.image = new Image(264, 157);
-        this.image.src = 'Images/citySkyline.png';
+        this.image = new Image(528, 314);
+        this.image.src = 'Images/Background/citySkyline.png';
         this.x = 0;
-        this.width = 264;
-        this.height = 157;
+        this.width = 528;
+        this.height = 314;
     }
     Draw() {
-        ui.ctx.drawImage(this.image, this.x, ui.canvas.height - 150, this.width, this.height);
+        ui.ctx.drawImage(this.image, this.x, ui.canvas.height - 275, this.width, this.height);
     }
     UpdatePosition() {
         this.x -= .05;
