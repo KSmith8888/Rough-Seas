@@ -1,4 +1,6 @@
-import { player, ui } from './app.js';
+import { player, ui, weapon } from './app.js';
+
+//Player Projectiles
 
 class Shell {
     constructor() {
@@ -10,10 +12,10 @@ class Shell {
         this.hit = false;
         this.projectileAnglesX = [-5, -5, 0, 5, 5];
         this.projectileAnglesY = [0, 5, 5, 5, 0];
-        this.projecttileAdjust = player.weaponAngle;
+        this.projecttileAdjust = weapon.weaponAngle;
         this.shellImageArray = ['Images/Cannon/shellLeft.png', 'Images/Cannon/shellUpLeft.png', 'Images/Cannon/shellUp.png', 'Images/Cannon/shellUpRight.png', 'Images/Cannon/shellRight.png'];
         this.shellImage = new Image(20, 16);
-        this.shellImage.src = this.shellImageArray[player.weaponAngle];
+        this.shellImage.src = this.shellImageArray[weapon.weaponAngle];
     }
     Draw() {
         ui.ctx.drawImage(this.shellImage, this.x, this.y, this.width, this.height);
@@ -37,12 +39,12 @@ class Bullet {
         this.y = player.y - 20;
         this.damage = 5;
         this.hit = false;
-        this.projectileAnglesX = [-5, -5, 0, 5, 5];
-        this.projectileAnglesY = [0, 5, 5, 5, 0];
-        this.projecttileAdjust = player.weaponAngle;
+        this.projectileAnglesX = [-8, -8, 0, 8, 8];
+        this.projectileAnglesY = [0, 8, 8, 8, 0];
+        this.projecttileAdjust = weapon.weaponAngle;
         this.bulletImageArray = ['Images/Machine/bulletLeft.png', 'Images/Machine/bulletUpLeft.png', 'Images/Machine/bulletUp.png', 'Images/Machine/bulletUpRight.png', 'Images/Machine/bulletRight.png'];
         this.bulletImage = new Image(20, 16);
-        this.bulletImage.src = this.bulletImageArray[player.weaponAngle];
+        this.bulletImage.src = this.bulletImageArray[weapon.weaponAngle];
     }
     Draw() {
         ui.ctx.drawImage(this.bulletImage, this.x, this.y, this.width, this.height);
@@ -57,6 +59,8 @@ class Bullet {
         });
     }
 }
+
+//Enemy Projectiles
 
 class SmallLaserShot {
     constructor(x, y) {
@@ -90,4 +94,22 @@ class LargeLaserShot {
     }
 }
 
-export { Shell, Bullet, SmallLaserShot, LargeLaserShot };
+//Explosions
+
+class SmallExplosion {
+    constructor(x, y) {
+        this.width = 18;
+        this.height = 18;
+        this.x = x;
+        this.y = y;
+        this.image = new Image(this.width, this.height);
+        this.image.src = 'Images/explosionImage.png';
+        this.activeFrames = 0;
+    }
+    Draw() {
+        ui.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+        this.activeFrames++;
+    }
+}
+
+export { Shell, Bullet, SmallLaserShot, LargeLaserShot, SmallExplosion };
