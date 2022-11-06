@@ -1,5 +1,5 @@
-import { generator }  from './Enemies.js';
-import { Shell, Bullet } from './Projectiles.js';
+import { level1Generator }  from './Enemy-Generation.js';
+import { Shell, Bullet, Rocket } from './Projectiles.js';
 import { cloudGenerator, OceanSurface, skyline } from './Background.js';
 
 class UserInterface {
@@ -38,9 +38,13 @@ class PlayerClass {
     }
     MoveShip(direction) {
         if(direction === 'ArrowLeft') {
-            this.x -= 5;
+            if (this.x >= 5) {
+                this.x -= 5;
+            }
         } else if(direction === 'ArrowRight') {
-            this.x += 5;
+            if (this.x < (ui.canvas.width - this.width)) {
+                this.x += 5;
+            }
         }
     }
     ControlProjectiles() {
@@ -50,7 +54,7 @@ class PlayerClass {
         });
     }
     LoadSaveData() {
-        localStorage.setItem('Weapon Choice', JSON.stringify('Machine'));
+        localStorage.setItem('Weapon Choice', JSON.stringify('Rocket'));
         localStorage.setItem('Health Stat', JSON.stringify(120));
         if(localStorage.getItem('Health Stat') !== null) {
             this.healthStat = JSON.parse(localStorage.getItem('Health Stat'));
@@ -105,6 +109,9 @@ class WeaponClass {
         this.machineImageArray = ['Images/Machine/machineLeft.png', 'Images/Machine/machineUpLeft.png', 'Images/Machine/machineUp.png', 'Images/Machine/machineUpRight.png', 'Images/Machine/machineRight.png'];
         this.machineImage = new Image(100, 64);
         this.machineImage.src = this.machineImageArray[this.weaponAngle];
+        this.launcherImageArray = ['Images/Rocket/launcherLeft.png', 'Images/Rocket/launcherUpLeft.png', 'Images/Rocket/launcherUp.png', 'Images/Rocket/launcherUpRight.png', 'Images/Rocket/launcherRight.png'];
+        this.launcherImage = new Image(100, 64);
+        this.launcherImage.src = this.launcherImageArray[this.weaponAngle];
     }
     DrawWeapon() {
         this.x = player.x + 95;
@@ -112,7 +119,7 @@ class WeaponClass {
         if(player.weaponChoice === 'Cannon') {
             ui.ctx.drawImage(this.cannonImage, this.x, this.y, this.width, this.height);
         } else if(player.weaponChoice === 'Rocket') {
-         
+            ui.ctx.drawImage(this.launcherImage, this.x, this.y, this.width, this.height);
         } else if(player.weaponChoice === 'Machine') {
             ui.ctx.drawImage(this.machineImage, this.x, this.y, this.width, this.height);
         }
@@ -126,11 +133,12 @@ class EventListeners {
                 player.MoveShip(event.code);
             } 
             if(event.code === 'KeyW') {
-                if(player.weaponChoice === 'Cannon' && player.firedProjectiles.length < 5) {
+                if(player.weaponChoice === 'Cannon' && player.firedProjectiles.length < 7) {
                     const shell = new Shell;
                     player.firedProjectiles.push(shell);
-                } else if(player.weaponChoice === 'Rocket') {
-                    console.log('Fired Rocket')
+                } else if(player.weaponChoice === 'Rocket' && player.firedProjectiles.length < 4) {
+                    const rocket = new Rocket;
+                    player.firedProjectiles.push(rocket);
                 } else if(player.weaponChoice === 'Machine' && player.firedProjectiles.length < 10) {
                     const bullet = new Bullet;
                     player.firedProjectiles.push(bullet);
@@ -141,6 +149,7 @@ class EventListeners {
                     weapon.weaponAngle -= 1;
                     weapon.cannonImage.src = weapon.cannonImageArray[weapon.weaponAngle];
                     weapon.machineImage.src = weapon.machineImageArray[weapon.weaponAngle];
+                    weapon.launcherImage.src = weapon.launcherImageArray[weapon.weaponAngle];
                 }
             } 
             if(event.code === 'KeyD') {
@@ -148,6 +157,7 @@ class EventListeners {
                     weapon.weaponAngle += 1;
                     weapon.cannonImage.src = weapon.cannonImageArray[weapon.weaponAngle];
                     weapon.machineImage.src = weapon.machineImageArray[weapon.weaponAngle];
+                    weapon.launcherImage.src = weapon.launcherImageArray[weapon.weaponAngle];
                 }
             } 
             if(event.code === 'KeyM') {
@@ -183,11 +193,11 @@ function animationLoop() {
         skyline.ControlSkyline();
         weapon.DrawWeapon();
         player.DrawShip();
-        generator.ControlEnemies();
-        generator.Collision();
-        generator.AddFinalBoss();
-        generator.ControlLasers();
-        generator.ControlExplosions();
+        level1Generator.ControlEnemies();
+        level1Generator.Collision();
+        level1Generator.AddFinalBoss();
+        level1Generator.ControlLasers();
+        level1Generator.ControlExplosions();
         water.ControlWater();
         healthBar.Draw();
         player.ControlProjectiles();
