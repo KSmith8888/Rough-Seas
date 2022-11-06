@@ -60,6 +60,35 @@ class Bullet {
     }
 }
 
+class Rocket {
+    constructor() {
+        this.width = 20;
+        this.height = 16;
+        this.x = player.x + 130;
+        this.y = player.y - 20;
+        this.damage = 15;
+        this.hit = false;
+        this.projectileAnglesX = [-3, -3, 0, 3, 3];
+        this.projectileAnglesY = [0, 3, 3, 3, 0];
+        this.projecttileAdjust = weapon.weaponAngle;
+        this.rocketImageArray = ['Images/Rocket/rocketLeft.png', 'Images/Rocket/rocketUpLeft.png', 'Images/Rocket/rocketUp.png', 'Images/Rocket/rocketUpRight.png', 'Images/Rocket/rocketRight.png'];
+        this.rocketImage = new Image(20, 16);
+        this.rocketImage.src = this.rocketImageArray[weapon.weaponAngle];
+    }
+    Draw() {
+        ui.ctx.drawImage(this.rocketImage, this.x, this.y, this.width, this.height);
+    }
+    UpdatePosition() {
+        this.x += this.projectileAnglesX[this.projecttileAdjust];
+        this.y -= this.projectileAnglesY[this.projecttileAdjust];
+        player.firedProjectiles.forEach((projectile, index) => {
+            if(projectile.x > ui.canvas.width || projectile.x < 0 || projectile.y < 0 || projectile.y > ui.canvas.height) {
+               player.firedProjectiles.splice(index, 1);
+            }
+        });
+    }
+}
+
 //Enemy Projectiles
 
 class SmallLaserShot {
@@ -112,4 +141,4 @@ class SmallExplosion {
     }
 }
 
-export { Shell, Bullet, SmallLaserShot, LargeLaserShot, SmallExplosion };
+export { Shell, Bullet, Rocket, SmallLaserShot, LargeLaserShot, SmallExplosion };
