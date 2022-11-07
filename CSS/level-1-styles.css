@@ -23,3 +23,17 @@ body {
 #menu-icon:hover, #menu-icon:focus {
     border: 3px solid rgb(14, 14, 82);
 }
+
+#mission-complete-menu {
+    width: 30vw;
+    height: 50vh;
+    background-color: rgb(228, 227, 227);
+}
+
+#mission-complete-form input {
+    margin: .5em 0;
+}
+
+#mission-complete-form fieldset {
+    margin: 1em 0;
+}
