@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="CSS/level-2-styles.css">
+    <script src="JS/user-interface.js" type="module"></script>
+    <script src="JS/player.js" type="module"></script>
+    <script src="JS/background.js" type="module"></script>
+    <script src="JS/enemies.js" type="module"></script>
+    <script src="JS/projectiles.js" type="module"></script>
+    <script src="JS/level-2-logic.js"  type="module"></script>
+    <title>Level 2: Monsoon</title>
+</head>
+<body>
+    <button id="menu-icon" title="Open Menu"></button>
+    <dialog id="game-menu">
+        <button id="close-menu-button">Close Menu</button>
+        <button id="exit-game-button">Exit Game</button>
+    </dialog>
+    <canvas id="canvas" autofocus><p>JavaScript is required to play this game, please turn on JavaScript.</p></canvas>
+    <dialog id="mission-complete-menu">
+        <p>You Have unlocked the rocket launcher!</p>
+        <p>Please select the weapon you would like to use for the next mission and which upgrade to unlock.</p>
+        <form id="mission-complete-form">
+            <fieldset>
+                <legend>Choose your weapon:</legend>
+                <label for="selectCannon">Cannon</label>
+                <input type="radio" name="weapon" value="Cannon" id="selectCannon">
+                <label for="selectMachine">Machine Gun</label>
+                <input type="radio" name="weapon" value="Machine Gun" id="selectMachine">
+                <label for="selectLauncher">Rocket Launcher</label>
+                <input type="radio" name="weapon" value="Rocket Launcher" id="selectLauncher">
+            </fieldset>
+            <fieldset>
+                <legend>Choose your Upgrade:</legend>
+                <label for="selectArmor">Armor + 10</label>
+                <input type="radio" name="upgrade" value="Armor" id="selectArmor">
+                <label for="selectDamage">Damage + 5</label>
+                <input type="radio" name="upgrade" value="Damage" id="selectDamage">
+            </fieldset>
+            <button type="submit">Begin Level 3</button>
+        </form>
+    </dialog>
+</body>
+</html>
