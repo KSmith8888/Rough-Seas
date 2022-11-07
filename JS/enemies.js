@@ -1,10 +1,12 @@
-import { ui, player } from './app.js';
-import { SmallLaserShot, LargeLaserShot, SmallExplosion} from './Projectiles.js';
+import { ui } from './user-interface.js';
+import { SmallLaserShot, LargeLaserShot, SmallExplosion} from './projectiles.js';
 
 class SmallEnemy1 {
-    constructor(generator) {
+    constructor(generator, player) {
+        this.player = player;
         this.generator = generator;
         this.enemyType = 'Small Enemy 1';
+        this.health = 30;
         this.width = 28;
         this.height = 28;
         this.x = Math.floor(Math.random() * ui.canvas.width);
@@ -20,7 +22,7 @@ class SmallEnemy1 {
     UpdatePosition() {
         if(this.y < ui.canvas.height) {
             this.y += 2;
-            if(this.x < (player.x + this.randomXNumber)) {
+            if(this.x < (this.player.x + this.randomXNumber)) {
                 this.x += 1;
             } else {
                 this.x -= 1;
@@ -31,25 +33,32 @@ class SmallEnemy1 {
         }
     }
     Hit() {
-        player.firedProjectiles.forEach((projectile) => {
+        this.player.firedProjectiles.forEach((projectile) => {
             if(
                 (projectile.x + projectile.width) >= this.x && 
                 projectile.x < (this.x + this.width) &&
                 (projectile.y + projectile.height) >= this.y &&
-                projectile.y < (this.y + this.height)
+                projectile.y < (this.y + this.height) &&
+                projectile.hit === false
                 ) {
-                    this.destroyed = true;
+                    projectile.hit = true;
+                    this.health -= (projectile.damage + this.player.damageStat);
                     this.generator.explosionArray.push(new SmallExplosion(this.x, this.y));
-                    player.enemiesDestroyed += 1;
+                    if(this.health <= 0) {
+                        this.destroyed = true;
+                        this.player.enemiesDestroyed += 1;
+                    }
                 }
         });
     }
 }
 
 class SmallEnemy2 {
-    constructor(generator) {
+    constructor(generator, player) {
+        this.player = player;
         this.generator = generator;
         this.enemyType = 'Small Enemy 2';
+        this.health = 25;
         this.width = 22;
         this.height = 32;
         this.x = Math.floor(Math.random() * ui.canvas.width);
@@ -69,7 +78,7 @@ class SmallEnemy2 {
         ui.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
     }
     UpdatePosition() {
-        if(this.x < player.x + this.randomXNumber) {
+        if(this.x < this.player.x + this.randomXNumber) {
             this.x += 1;
         } else {
             this.x -= 1;
@@ -79,25 +88,32 @@ class SmallEnemy2 {
         }
     }
     Hit() {
-        player.firedProjectiles.forEach((projectile) => {
+        this.player.firedProjectiles.forEach((projectile) => {
             if(
                 (projectile.x + projectile.width) >= this.x && 
                 projectile.x < (this.x + this.width) &&
                 (projectile.y + projectile.height) >= this.y &&
-                projectile.y < (this.y + this.height)
+                projectile.y < (this.y + this.height) &&
+                projectile.hit === false
                 ) {
-                    this.destroyed = true;
+                    projectile.hit = true;
+                    this.health -= (projectile.damage + this.player.damageStat);
                     this.generator.explosionArray.push(new SmallExplosion(this.x, this.y));
-                    player.enemiesDestroyed += 1;
+                    if(this.health <= 0) {
+                        this.destroyed = true;
+                        this.player.enemiesDestroyed += 1;
+                    }
                 }
         });
     }
 }
 
 class SmallEnemy3 {
-    constructor(generator) {
+    constructor(generator, player) {
+        this.player = player;
         this.generator = generator;
         this.enemyType = 'Small Enemy 3';
+        this.health = 20;
         this.width = 26;
         this.height = 34;
         this.x = Math.floor(Math.random() * ui.canvas.width);
@@ -118,7 +134,7 @@ class SmallEnemy3 {
     }
     UpdatePosition() {
         
-        if(this.x < player.x + this.randomXNumber) {
+        if(this.x < this.player.x + this.randomXNumber) {
             this.x += 2;
         } else {
             this.x -= 2;
@@ -128,26 +144,32 @@ class SmallEnemy3 {
         }
     }
     Hit() {
-        player.firedProjectiles.forEach((projectile) => {
+        this.player.firedProjectiles.forEach((projectile) => {
             if(
                 (projectile.x + projectile.width) >= this.x && 
                 projectile.x < (this.x + this.width) &&
                 (projectile.y + projectile.height) >= this.y &&
-                projectile.y < (this.y + this.height)
+                projectile.y < (this.y + this.height) &&
+                projectile.hit === false
                 ) {
-                    this.destroyed = true;
+                    projectile.hit = true;
+                    this.health -= (projectile.damage + this.player.damageStat);
                     this.generator.explosionArray.push(new SmallExplosion(this.x, this.y));
-                    player.enemiesDestroyed += 1;
+                    if(this.health <= 0) {
+                        this.destroyed = true;
+                        this.player.enemiesDestroyed += 1;
+                    }
                 }
         });
     }
 }
 
 class LargeEnemy1 {
-    constructor(generator) {
+    constructor(generator, player) {
+        this.player = player;
         this.generator = generator;
         this.enemyType = 'Large Enemy 1';
-        this.health = 50;
+        this.health = 100;
         this.width = 50;
         this.height = 60;
         this.x = Math.floor(Math.random() * ui.canvas.width);
@@ -168,7 +190,7 @@ class LargeEnemy1 {
         ui.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
     }
     UpdatePosition() {
-        if(this.x < player.x + this.randomXNumber) {
+        if(this.x < this.player.x + this.randomXNumber) {
             this.x += 1;
         } else {
             this.x -= 1;
@@ -178,7 +200,7 @@ class LargeEnemy1 {
         }
     }
     Hit() {
-        player.firedProjectiles.forEach((projectile) => {
+        this.player.firedProjectiles.forEach((projectile) => {
             if(
                 (projectile.x + projectile.width) >= this.x && 
                 projectile.x < (this.x + this.width) &&
@@ -187,12 +209,12 @@ class LargeEnemy1 {
                 projectile.hit === false
                 ) {
                     projectile.hit = true;
-                    this.health -= projectile.damage;
+                    this.health -= (projectile.damage + this.player.damageStat);
                     this.generator.explosionArray.push(new SmallExplosion(this.x, this.y));
                     if(this.health <= 0) {
                         this.destroyed = true;
                         this.generator.finalBossDestroyed = true;
-                        player.enemiesDestroyed += 1;
+                        this.player.enemiesDestroyed += 1;
                     }
                 }
         });
