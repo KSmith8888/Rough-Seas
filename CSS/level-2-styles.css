@@ -1,0 +1,39 @@
+body {
+    margin: 0;
+}
+
+#canvas {
+    position: absolute;
+    z-index: 1;
+    background: linear-gradient(#1c1c1c, hsl(240, 70%, 10%, 95%));
+}
+
+#menu-icon {
+    width: 30px;
+    height: 30px;
+    background-image: url('../Images/menu-icon.png');
+    background-size: cover;
+    background-position: center;
+    position: fixed;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 2;
+}
+
+#menu-icon:hover, #menu-icon:focus {
+    border: 3px solid rgb(14, 14, 82);
+}
+
+#mission-complete-menu {
+    width: 30vw;
+    height: 50vh;
+    background-color: rgb(228, 227, 227);
+}
+
+#mission-complete-form input {
+    margin: .5em 0;
+}
+
+#mission-complete-form fieldset {
+    margin: 1em 0;
+}
