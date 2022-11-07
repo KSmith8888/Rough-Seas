@@ -1,4 +1,4 @@
-import { ui } from './app.js';
+import { ui } from './user-interface.js';
 
 class Cloud1 {
     constructor(x, y) {
@@ -124,7 +124,8 @@ class OceanSurface {
 }
 
 const cloudGenerator = new Clouds;
-cloudGenerator.AddInitialClouds();
 const skyline = new CitySkyline;
+const water = new OceanSurface();
+cloudGenerator.AddInitialClouds();
 
-export { cloudGenerator, OceanSurface, skyline };
+export { cloudGenerator, water, skyline };
