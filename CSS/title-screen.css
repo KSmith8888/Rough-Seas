@@ -22,14 +22,14 @@ body {
 
 #header {
     text-align: center;
+    margin-bottom: 3em;
 }
 
 .subtitle {
-    margin-top: 0;
+    margin: 0;
 }
 
 h1 {
-    margin-bottom: 1em;
     font-size: 2.4rem;
 }
 
@@ -39,8 +39,9 @@ h1 {
 }
 
 .button {
+    width: 10em;
     margin: .5em;
-    padding: .5em .9em;
+    padding: .4em .8em;
     border-radius: 5px;
     cursor: pointer;
 }
