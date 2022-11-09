@@ -1,11 +1,12 @@
-import { ui } from './user-interface.js';
+import { Shell, Bullet, Rocket } from './projectiles.js';
 
 class PlayerClass {
-    constructor() {
+    constructor(userInterface) {
+        this.ui = userInterface;
         this.width = 255;
         this.height = 80;
         this.x = 500;
-        this.y = ui.canvas.height - this.height;
+        this.y = this.ui.canvas.height - this.height;
         this.healthStat = 100;
         this.damageStat = 10;
         this.health = 100;
@@ -16,7 +17,7 @@ class PlayerClass {
         this.image.src = 'Images/playerShipV3.png';
     }
     DrawShip() {
-        ui.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+        this.ui.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
     }
     MoveShip(direction) {
         if(direction === 'ArrowLeft') {
@@ -24,30 +25,21 @@ class PlayerClass {
                 this.x -= 5;
             }
         } else if(direction === 'ArrowRight') {
-            if (this.x < (ui.canvas.width - this.width)) {
+            if (this.x < (this.ui.canvas.width - this.width)) {
                 this.x += 5;
             }
         }
     }
     ControlProjectiles() {
+        this.firedProjectiles = this.firedProjectiles.filter((projectile) => {
+            if(!projectile.offScreen && !projectile.hit) {
+                return projectile;
+            }
+        });
         this.firedProjectiles.forEach((projectile) => {
             projectile.UpdatePosition();
             projectile.Draw();
         });
-    }
-    LoadSaveData() {
-        localStorage.setItem('Weapon Choice', JSON.stringify('Cannon'));
-        localStorage.setItem('Health Stat', JSON.stringify(120));
-        if(localStorage.getItem('Health Stat') !== null) {
-            this.healthStat = JSON.parse(localStorage.getItem('Health Stat'));
-            this.health = this.healthStat;
-        }
-        if(localStorage.getItem('Damage Stat') !== null) {
-            this.damageStat = JSON.parse(localStorage.getItem('Damage Stat'));
-        }
-        if(localStorage.getItem('Weapon Choice') !== null) {
-            this.weaponChoice = JSON.parse(localStorage.getItem('Weapon Choice'));
-        }
     }
     StartNextMission() {
         if(JSON.parse(localStorage.getItem('Game Level')) === 2) {
@@ -60,7 +52,8 @@ class PlayerClass {
 }
 
 class PlayerHealthBar {
-    constructor(player) {
+    constructor(player, userInterface) {
+        this.ui = userInterface;
         this.player = player;
         this.x = 40;
         this.y = 10;
@@ -71,24 +64,25 @@ class PlayerHealthBar {
     Draw() {
         this.width = this.player.healthStat * 2 - 5;
         this.fill = this.player.health * 2 - 5;
-        ui.ctx.strokeStyle = 'black';
-        ui.ctx.fillStyle = 'black';
-        ui.ctx.beginPath();
-        ui.ctx.moveTo(this.x, this.y);
-        ui.ctx.lineTo(this.x + this.width + 3, this.y);
-        ui.ctx.lineTo(this.x + this.width + 3, this.y + this.height);
-        ui.ctx.lineTo(this.x, this.y + this.height);
-        ui.ctx.lineTo(this.x, this.y);
-        ui.ctx.closePath();
-        ui.ctx.fill();
-        ui.ctx.stroke();
-        ui.ctx.fillStyle = 'rgb(184, 29, 9)';
-        ui.ctx.fillRect(this.x + 2, this.y + 2, this.fill, this.height - 4);
+        this.ui.ctx.strokeStyle = 'black';
+        this.ui.ctx.fillStyle = 'black';
+        this.ui.ctx.beginPath();
+        this.ui.ctx.moveTo(this.x, this.y);
+        this.ui.ctx.lineTo(this.x + this.width + 3, this.y);
+        this.ui.ctx.lineTo(this.x + this.width + 3, this.y + this.height);
+        this.ui.ctx.lineTo(this.x, this.y + this.height);
+        this.ui.ctx.lineTo(this.x, this.y);
+        this.ui.ctx.closePath();
+        this.ui.ctx.fill();
+        this.ui.ctx.stroke();
+        this.ui.ctx.fillStyle = 'rgb(184, 29, 9)';
+        this.ui.ctx.fillRect(this.x + 2, this.y + 2, this.fill, this.height - 4);
     }
 }
 
 class WeaponClass {
-    constructor(player) {
+    constructor(player, userInterface) {
+        this.ui = userInterface;
         this.player = player;
         this.x = this.player.x + 95;
         this.y = this.player.y - 55;
@@ -105,15 +99,27 @@ class WeaponClass {
         this.launcherImage = new Image(100, 64);
         this.launcherImage.src = this.launcherImageArray[this.weaponAngle];
     }
+    FireProjectile() {
+        if(this.player.weaponChoice === 'Cannon' && this.player.firedProjectiles.length < 7) {
+            const shell = new Shell(this.player, this, this.ui);
+            this.player.firedProjectiles.push(shell);
+        } else if(this.player.weaponChoice === 'Rocket' && this.player.firedProjectiles.length < 4) {
+            const rocket = new Rocket(this.player, this, this.ui);
+            this.player.firedProjectiles.push(rocket);
+        } else if(this.player.weaponChoice === 'Machine' && this.player.firedProjectiles.length < 10) {
+            const bullet = new Bullet(this.player, this, this.ui);
+            this.player.firedProjectiles.push(bullet);
+        }
+    }
     DrawWeapon() {
         this.x = this.player.x + 95;
         this.y = this.player.y - 55;
         if(this.player.weaponChoice === 'Cannon') {
-            ui.ctx.drawImage(this.cannonImage, this.x, this.y, this.width, this.height);
+            this.ui.ctx.drawImage(this.cannonImage, this.x, this.y, this.width, this.height);
         } else if(this.player.weaponChoice === 'Rocket') {
-            ui.ctx.drawImage(this.launcherImage, this.x, this.y, this.width, this.height);
+            this.ui.ctx.drawImage(this.launcherImage, this.x, this.y, this.width, this.height);
         } else if(this.player.weaponChoice === 'Machine') {
-            ui.ctx.drawImage(this.machineImage, this.x, this.y, this.width, this.height);
+            this.ui.ctx.drawImage(this.machineImage, this.x, this.y, this.width, this.height);
         }
     }
 }
