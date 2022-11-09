@@ -1,17 +1,16 @@
-import { ui } from './user-interface.js';
-
 class Cloud1 {
-    constructor(x, y) {
+    constructor(x, y, userInterface) {
         this.width = 174;
         this.height = 157;
         this.x = x;
         this.y = y;
+        this.ui = userInterface;
         this.image = new Image(this.width, this.height);
         this.image.src = 'Images/Background/cloud1.png';
         this.offScreen = false;
     }
     Draw() {
-        ui.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+        this.ui.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
     }
     UpdatePosition() {
         this.x -= .5;
@@ -22,17 +21,18 @@ class Cloud1 {
 }
 
 class Cloud2 {
-    constructor(x, y) {
+    constructor(x, y, userInterface) {
         this.width = 234;
         this.height = 128;
         this.x = x;
         this.y = y;
+        this.ui = userInterface;
         this.image = new Image(this.width, this.height);
         this.image.src = 'Images/Background/cloud2.png';
         this.offScreen = false;
     }
     Draw() {
-        ui.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+        this.ui.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
     }
     UpdatePosition() {
         this.x -= .25;
@@ -43,40 +43,49 @@ class Cloud2 {
 }
 
 class Clouds {
-    constructor() {
+    constructor(userInterface) {
+        this.ui = userInterface;
         this.cloudArray = [];
         this.addCloud1 = setInterval(() => {
             if(this.cloudArray.length < 12) {
-                this.cloudArray.push(new Cloud1(ui.canvas.width, Math.floor(Math.random() * 350)));
+                this.cloudArray.push(new Cloud1(this.ui.canvas.width, Math.floor(Math.random() * 350), this.ui));
             }
         }, 15000);
         this.addCloud2 = setInterval(() => {
             if(this.cloudArray.length < 12) {
-                this.cloudArray.push(new Cloud2(ui.canvas.width, Math.floor(Math.random() * 250)));
+                this.cloudArray.push(new Cloud2(this.ui.canvas.width, Math.floor(Math.random() * 250), this.ui));
             }
         }, 20000);
     }
-    DrawClouds() {
-        this.cloudArray.forEach((cloud, index) => {
+    HandleClouds() {
+        this.cloudArray = this.cloudArray.filter((cloud) => {
             if(!cloud.offScreen) {
-                cloud.Draw();
-                cloud.UpdatePosition();
-            } else {
-                this.cloudArray.splice(index, 1);
+                return cloud;
             }
         });
     }
+    Draw() {
+        this.cloudArray.forEach((cloud) => {
+            cloud.Draw();
+            cloud.UpdatePosition();
+        });
+    }
+    ControlClouds() {
+        this.HandleClouds();
+        this.Draw();
+    }
     AddInitialClouds() {
-        this.cloudArray.push(new Cloud1(200, 150));
-        this.cloudArray.push(new Cloud1(800, 250));
-        this.cloudArray.push(new Cloud1(600, 75));
-        this.cloudArray.push(new Cloud2(350, 175));
-        this.cloudArray.push(new Cloud2(1000, 50));
+        this.cloudArray.push(new Cloud1(200, 150, this.ui));
+        this.cloudArray.push(new Cloud1(800, 250, this.ui));
+        this.cloudArray.push(new Cloud1(600, 75, this.ui));
+        this.cloudArray.push(new Cloud2(350, 175, this.ui));
+        this.cloudArray.push(new Cloud2(1000, 50, this.ui));
     }
 }
 
 class CitySkyline {
-    constructor() {
+    constructor(userInterface) {
+        this.ui = userInterface;
         this.image = new Image(528, 314);
         this.image.src = 'Images/Background/citySkyline.png';
         this.x = 0;
@@ -84,7 +93,7 @@ class CitySkyline {
         this.height = 314;
     }
     Draw() {
-        ui.ctx.drawImage(this.image, this.x, ui.canvas.height - 275, this.width, this.height);
+        this.ui.ctx.drawImage(this.image, this.x, this.ui.canvas.height - 275, this.width, this.height);
     }
     UpdatePosition() {
         this.x -= .05;
@@ -98,20 +107,21 @@ class CitySkyline {
 }
 
 class OceanSurface {
-    constructor() {
-        this.width = ui.canvas.width;
+    constructor(userInterface) {
+        this.ui = userInterface;
+        this.width = this.ui.canvas.width;
         this.height = 27;
         this.x = 0;
-        this.y = ui.canvas.height - this.height;
+        this.y = this.ui.canvas.height - this.height;
         this.image = new Image();
         this.image.src = 'Images/oceanSurface.png';
     }
     Draw() {
-        ui.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
-        ui.ctx.drawImage(this.image, (this.x + this.width), this.y, this.width, this.height);
+        this.ui.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+        this.ui.ctx.drawImage(this.image, (this.x + this.width), this.y, this.width, this.height);
     }
     UpdatePosition() {
-        if(this.x > (0 - ui.canvas.width)) {
+        if(this.x > (0 - this.ui.canvas.width)) {
             this.x -= 1;
         }else {
             this.x = 0;
@@ -123,9 +133,4 @@ class OceanSurface {
     }
 }
 
-const cloudGenerator = new Clouds;
-const skyline = new CitySkyline;
-const water = new OceanSurface();
-cloudGenerator.AddInitialClouds();
-
-export { cloudGenerator, water, skyline };
+export { Clouds, CitySkyline, OceanSurface };
