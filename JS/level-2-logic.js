@@ -1,67 +1,58 @@
-import { ui, EventListeners } from './user-interface.js';
+import { UserInterface, EventListeners } from './user-interface.js';
 import { PlayerClass, PlayerHealthBar, WeaponClass } from './player.js';
-import { cloudGenerator, water } from './background.js';
+import { Clouds, OceanSurface } from './background.js';
 import { SmallEnemy1, SmallEnemy3, LargeEnemy1 } from './enemies.js';
 import { SmallExplosion } from './projectiles.js';
 
 class Level2EnemyGenerator {
-    constructor(player) {
+    constructor(player, userInterface) {
         this.player = player;
+        this.ui = userInterface;
         this.EnemyArray = [];
         this.LaserArray = [];
         this.explosionArray = [];
         this.finalBossReleased = false;
         this.finalBossDestroyed = false;
         this.addSmallEnemy1 = setInterval(() => {
-            if(this.EnemyArray.length < 15 && !ui.gameMenu.open) {
-                this.EnemyArray.push(new SmallEnemy1(this, this.player));
+            if(this.EnemyArray.length < 15 && !this.ui.gameMenu.open) {
+                this.EnemyArray.push(new SmallEnemy1(this, this.player, this.ui));
             }
         }, 20000);
         this.addSmallEnemy3 = setInterval(() => {
-            if(this.EnemyArray.length < 15 && !ui.gameMenu.open) {
-                this.EnemyArray.push(new SmallEnemy3(this, this.player));
+            if(this.EnemyArray.length < 15 && !this.ui.gameMenu.open) {
+                this.EnemyArray.push(new SmallEnemy3(this, this.player, this.ui));
             }
         }, 12000);
     }
     Collision() {
+        this.EnemyArray = this.EnemyArray.filter((ship) => {
+            if(!ship.destroyed) {
+                return ship;
+            }
+        });
         this.EnemyArray.forEach((ship, index) => {
             if(ship.enemyType === 'Small Enemy 1') {
                 if(
-                    ship.x >= player.x && 
-                    ship.x < (player.x + player.width) &&
-                    ship.y > (ui.canvas.height - player.height)
+                    ship.x >= this.player.x && 
+                    ship.x < (this.player.x + this.player.width) &&
+                    ship.y > (this.ui.canvas.height - this.player.height)
                     ) {
-                        player.health -= 20;
-                        this.explosionArray.push(new SmallExplosion(ship.x, ship.y));
+                        this.player.health -= 20;
+                        this.explosionArray.push(new SmallExplosion(ship.x, ship.y, this.ui));
                         this.EnemyArray.splice(index, 1);
-                } else if(ship.y === ui.canvas.height || ship.destroyed) {
-                    this.EnemyArray.splice(index, 1);
-                }
-            }
-            if(ship.enemyType === 'Small Enemy 2') {
-                if(ship.destroyed) {
-                    this.EnemyArray.splice(index, 1);
-                }
-            }
-            if(ship.enemyType === 'Small Enemy 3') {
-                if(ship.destroyed) {
-                    this.EnemyArray.splice(index, 1);
-                }
-            }
-            if(ship.enemyType === 'Large Enemy 1') {
-                if(ship.destroyed) {
-                    this.EnemyArray.splice(index, 1);
+                } else if(ship.y === this.ui.canvas.height) {
+                    ship.destroyed = true;
                 }
             }
         });
         this.LaserArray.forEach((laser, index) => {
             if(
-                laser.x >= player.x && 
-                laser.x < (player.x + player.width) &&
-                laser.y > (ui.canvas.height - player.height)
+                laser.x >= this.player.x && 
+                laser.x < (this.player.x + this.player.width) &&
+                laser.y > (this.ui.canvas.height - this.player.height)
                 ) {
-                    player.health -= laser.damage;
-                    this.explosionArray.push(new SmallExplosion(laser.x, laser.y));
+                    this.player.health -= laser.damage;
+                    this.explosionArray.push(new SmallExplosion(laser.x, laser.y, this.ui));
                     this.LaserArray.splice(index, 1);
             }
             if(laser.y >= canvas.height) {
@@ -71,14 +62,14 @@ class Level2EnemyGenerator {
     }
     CompleteLevel() {
         localStorage.setItem('Game Level', JSON.stringify(3));
-        ui.missionCompleteMenu.showModal();
+        this.ui.missionCompleteMenu.showModal();
     }
     AddFinalBoss() {
-        if(player.enemiesDestroyed >= 10 && !ui.gameMenu.open && this.finalBossReleased === false) {
+        if(this.player.enemiesDestroyed >= 10 && !this.ui.gameMenu.open && this.finalBossReleased === false) {
             this.finalBossReleased = true;
             clearInterval(this.addSmallEnemy1);
             clearInterval(this.addSmallEnemy2);
-            this.EnemyArray.push(new LargeEnemy1(this, this.player));
+            this.EnemyArray.push(new LargeEnemy1(this, this.player, this.ui));
         }
         if(this.finalBossReleased) {
             if(this.finalBossDestroyed) {
@@ -100,37 +91,60 @@ class Level2EnemyGenerator {
         });
     }
     ControlExplosions() {
-        this.explosionArray.forEach((explosion, index) => {
+        this.explosionArray = this.explosionArray.filter((explosion) => {
             if(explosion.activeFrames < 10) {
-                explosion.Draw();
-            } else {
-                this.explosionArray.splice(index, 1);
+                return explosion;
             }
-        })
+        });
+        this.explosionArray.forEach((explosion) => {
+            explosion.Draw();
+        });
     }
 }
 
-const player = new PlayerClass(ui);
-player.LoadSaveData();
-const weapon = new WeaponClass(player);
-const healthBar = new PlayerHealthBar(player);
-const level2Generator = new Level2EnemyGenerator(player);
-const events = new EventListeners(player, weapon);
+class Game {
+    constructor() {
+        this.ui = new UserInterface();
+        this.player = new PlayerClass(this.ui);
+        this.weapon = new WeaponClass(this.player, this.ui);
+        this.healthBar = new PlayerHealthBar(this.player, this.ui);
+        this.level2Generator = new Level2EnemyGenerator(this.player, this.ui);
+        this.events = new EventListeners(this.player, this.weapon, this.ui);
+        this.cloudGenerator = new Clouds(this.ui);
+        this.water = new OceanSurface(this.ui);
+    }
+    LoadSaveData() {
+        if(localStorage.getItem('Health Stat') !== null) {
+            this.player.healthStat = JSON.parse(localStorage.getItem('Health Stat'));
+            this.player.health = this.player.healthStat;
+        }
+        if(localStorage.getItem('Damage Stat') !== null) {
+            this.player.damageStat = JSON.parse(localStorage.getItem('Damage Stat'));
+        }
+        if(localStorage.getItem('Weapon Choice') !== null) {
+            this.player.weaponChoice = JSON.parse(localStorage.getItem('Weapon Choice'));
+        }
+    }
+}
+
+const game = new Game();
+game.LoadSaveData();
+game.cloudGenerator.AddInitialClouds();
 
 function animationLoop() {
-    if(!ui.gameMenu.open && !ui.missionCompleteMenu.open) {
-        ui.ctx.clearRect(0, 0, ui.canvas.width, ui.canvas.height);
-        cloudGenerator.DrawClouds();
-        weapon.DrawWeapon();
-        player.DrawShip();
-        level2Generator.ControlEnemies();
-        level2Generator.Collision();
-        level2Generator.AddFinalBoss();
-        level2Generator.ControlLasers();
-        level2Generator.ControlExplosions();
-        water.ControlWater();
-        healthBar.Draw();
-        player.ControlProjectiles();
+    if(!game.ui.gameMenu.open && !game.ui.missionCompleteMenu.open) {
+        game.ui.ctx.clearRect(0, 0, game.ui.canvas.width, game.ui.canvas.height);
+        game.cloudGenerator.ControlClouds();
+        game.weapon.DrawWeapon();
+        game.player.DrawShip();
+        game.level2Generator.ControlEnemies();
+        game.level2Generator.Collision();
+        game.level2Generator.AddFinalBoss();
+        game.level2Generator.ControlLasers();
+        game.level2Generator.ControlExplosions();
+        game.water.ControlWater();
+        game.healthBar.Draw();
+        game.player.ControlProjectiles();
     }
     requestAnimationFrame(animationLoop);
 }
