@@ -1,5 +1,3 @@
-import { Shell, Bullet, Rocket } from './projectiles.js';
-
 class UserInterface {
     constructor() {
         this.canvas = document.getElementById('canvas');
@@ -18,24 +16,16 @@ class UserInterface {
 }
 
 class EventListeners {
-    constructor(player, weapon) {
+    constructor(player, weapon, userInterface) {
         this.player = player;
         this.weapon = weapon;
+        this.ui = userInterface;
         this.keyEvent = document.addEventListener('keydown', (event) => {
             if(event.code === 'ArrowLeft' || event.code === 'ArrowRight') {
                 this.player.MoveShip(event.code);
             } 
             if(event.code === 'KeyW') {
-                if(this.player.weaponChoice === 'Cannon' && this.player.firedProjectiles.length < 7) {
-                    const shell = new Shell(this.player, this.weapon);
-                    this.player.firedProjectiles.push(shell);
-                } else if(this.player.weaponChoice === 'Rocket' && this.player.firedProjectiles.length < 4) {
-                    const rocket = new Rocket(this.player, this.weapon);
-                    this.player.firedProjectiles.push(rocket);
-                } else if(this.player.weaponChoice === 'Machine' && this.player.firedProjectiles.length < 10) {
-                    const bullet = new Bullet(this.player, this.weapon);
-                    this.player.firedProjectiles.push(bullet);
-                }
+                this.weapon.FireProjectile();
             } 
             if(event.code === 'KeyA') {
                 if(weapon.weaponAngle > 0) {
@@ -54,27 +44,42 @@ class EventListeners {
                 }
             } 
             if(event.code === 'KeyM') {
-                ui.menuSound.play().catch((error) => {console.error(error)});
-                ui.gameMenu.showModal();
+                this.ui.menuSound.play().catch((error) => {console.error(error)});
+                this.ui.gameMenu.showModal();
             }
         });
-        this.openMenu = ui.menuIcon.addEventListener('click', () => {
-            ui.menuSound.play().catch((error) => {console.error(error)});
-            ui.gameMenu.showModal();
+        this.openMenu = this.ui.menuIcon.addEventListener('click', () => {
+            this.ui.menuSound.play().catch((error) => {console.error(error)});
+            this.ui.gameMenu.showModal();
         });
-        this.closeMenu = ui.closeMenuBtn.addEventListener('click', () => {
-            ui.gameMenu.close();
+        this.closeMenu = this.ui.closeMenuBtn.addEventListener('click', () => {
+            this.ui.gameMenu.close();
         });
-        this.exitGame = ui.exitGameBtn.addEventListener('click', () => {
+        this.exitGame = this.ui.exitGameBtn.addEventListener('click', () => {
             location.href = './index.html';
         });
-        this.beginNextMission = ui.missionCompleteForm.addEventListener('submit', (event) => {
+        this.beginNextMission = this.ui.missionCompleteForm.addEventListener('submit', (event) => {
             event.preventDefault();
+            if(document.getElementById('selectCannon').checked) {
+                localStorage.setItem('Weapon Choice', JSON.stringify('Cannon'));
+            } else if(document.getElementById('selectMachine').checked) {
+                localStorage.setItem('Weapon Choice', JSON.stringify('Machine'));
+            }
+            if(document.getElementById('selectLauncher')) {
+                if(document.getElementById('selectLauncher').checked) {
+                    localStorage.setItem('Weapon Choice', JSON.stringify('Rocket'));
+                }
+            }
+            if(document.getElementById('selectArmor').checked) {
+                this.player.healthStat += 10;
+                localStorage.setItem('Health Stat', JSON.stringify(this.player.healthStat));
+            } else if(document.getElementById('selectDamage').checked) {
+                this.player.damageStat += 5;
+                localStorage.setItem('Damage Stat', JSON.stringify(this.player.damageStat));
+            }
             this.player.StartNextMission();
         });
     }
 }
 
-const ui = new UserInterface();
-
-export { ui, EventListeners };
+export { UserInterface, EventListeners };
