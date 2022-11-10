@@ -37,3 +37,58 @@ body {
 #mission-complete-form fieldset {
     margin: 1em 0;
 }
+
+.weapon-choice-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 20vh;
+    padding-bottom: 1em;
+    border-bottom: 1px solid grey;
+}
+
+.weapon-select-container, .armor-select-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.weapon-stats-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.weapon-choice-image {
+    margin-right: 1em;
+    width: 100px;
+    height: 64px;
+}
+
+.weapon-choice-label {
+    margin: 1em;
+}
+
+.upgrade-option-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 20vh;
+    padding-bottom: 1em;
+    border-bottom: 1px solid grey;
+}
+
+#armor-stat, #damage-stat {
+    display: block;
+    font-size: 1.2rem;
+}
+
+#shield-image {
+    width: 50px; 
+    height: 64;
+}
+
+#sword-image {
+    width: 55px;
+    height: 70px;
+}
