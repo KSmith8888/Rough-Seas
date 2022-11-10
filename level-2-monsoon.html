@@ -20,19 +20,72 @@
         <form id="mission-complete-form">
             <fieldset>
                 <legend>Choose your weapon:</legend>
-                <label for="selectCannon">Cannon</label>
-                <input type="radio" name="weapon" value="Cannon" id="selectCannon">
-                <label for="selectMachine">Machine Gun</label>
-                <input type="radio" name="weapon" value="Machine Gun" id="selectMachine">
-                <label for="selectLauncher">Rocket Launcher</label>
-                <input type="radio" name="weapon" value="Rocket Launcher" id="selectLauncher">
+                <div class="weapon-choice-container">
+                    <div class="weapon-select-container">
+                        <img src="Images/Cannon/cannonRight.png" alt="A pixelated red cannon" class="weapon-choice-image">
+                        <label for="selectCannon" class="weapon-choice-label">Cannon
+                            <input type="radio" name="weapon" value="Cannon" id="selectCannon">
+                        </label>
+                    </div>
+                    <div class="weapon-stats-container">
+                        <p>Weapon Stats</p>
+                        <label for="cannon-damage-bar">Damage:</label>
+                        <progress id="cannon-damage-bar" value="50" max="100"></progress>
+                        <label for="cannon-fire-bar">Fire Rate:</label>
+                        <progress id="cannon-fire-bar" value="50" max="100"></progress>
+                    </div>
+                </div>
+                <div class="weapon-choice-container">
+                    <div class="weapon-select-container">
+                        <img src="Images/Machine/machineLeft.png" alt="A pixelated green machine gun" class="weapon-choice-image">
+                        <label for="selectMachine" class="weapon-choice-label">Machine Gun
+                            <input type="radio" name="weapon" value="Machine" id="selectMachine">
+                        </label>
+                    </div>
+                    <div class="weapon-stats-container">
+                        <p>Weapon Stats</p>
+                        <label for="machine-damage-bar">Damage:</label>
+                        <progress id="machine-damage-bar" value="30" max="100"></progress>
+                        <label for="machine-fire-bar">Fire Rate:</label>
+                        <progress id="machine-fire-bar" value="80" max="100"></progress>
+                    </div>
+                </div>
+                <div class="weapon-choice-container">
+                    <div class="weapon-select-container">
+                        <img src="Images/Rocket/launcherRight.png" alt="A pixelated blue rocket launcher" class="weapon-choice-image">
+                        <label for="selectLauncher" class="weapon-choice-label">Rocket Launcher
+                            <input type="radio" name="weapon" value="Launcher" id="selectLauncher">
+                        </label>
+                    </div>
+                    <div class="weapon-stats-container">
+                        <p>Weapon Stats</p>
+                        <label for="launcher-damage-bar">Damage:</label>
+                        <progress id="launcher-damage-bar" value="80" max="100"></progress>
+                        <label for="launcher-fire-bar">Fire Rate:</label>
+                        <progress id="launcher-fire-bar" value="30" max="100"></progress>
+                    </div>
+                </div>
             </fieldset>
             <fieldset>
                 <legend>Choose your Upgrade:</legend>
-                <label for="selectArmor">Armor + 10</label>
-                <input type="radio" name="upgrade" value="Armor" id="selectArmor">
-                <label for="selectDamage">Damage + 5</label>
-                <input type="radio" name="upgrade" value="Damage" id="selectDamage">
+                <div class="upgrade-option-container">
+                    <div class="armor-select-container">
+                        <img src="Images/shieldIcon.png" alt="A pixelated grey shield" id="shield-image">
+                        <label for="selectArmor">Armor + 10
+                            <input type="radio" name="upgrade" value="Armor" id="selectArmor">
+                        </label>
+                    </div>
+                    <p>Your current armor stat is <span id="armor-stat">110</span></p>
+                </div>
+                <div class="upgrade-option-container">
+                    <div class="armor-select-container">
+                        <img src="Images/swordIcon.png" alt="A pixelated grey sword" id="sword-image">
+                        <label for="selectDamage">Damage + 5
+                            <input type="radio" name="upgrade" value="Damage" id="selectDamage">
+                        </label>
+                    </div>
+                    <p>Your current damage stat is <span id="damage-stat">15</span></p>
+                </div>
             </fieldset>
             <button type="submit">Begin Level 3</button>
         </form>
