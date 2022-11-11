@@ -109,6 +109,7 @@ class SmallLaserShot {
         this.damage = 5;
         this.image = new Image(8, 14);
         this.image.src = 'Images/Enemies/smallLaser.png';
+        this.offScreen = false;
     }
     Draw() {
         this.ui.ctx.drawImage(this.image, this.x, this.y, 8, 14);
@@ -126,6 +127,7 @@ class LargeLaserShot {
         this.damage = 10;
         this.image = new Image(10, 16);
         this.image.src = 'Images/Enemies/smallLaser.png';
+        this.offScreen = false;
     }
     Draw() {
         this.ui.ctx.drawImage(this.image, this.x, this.y, 10, 16);
