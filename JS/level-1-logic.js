@@ -1,7 +1,8 @@
 import { UserInterface, EventListeners } from './user-interface.js';
 import { PlayerClass, PlayerHealthBar, WeaponClass } from './player.js';
 import { Clouds, OceanSurface, CitySkyline } from './background.js';
-import { SmallEnemy1, SmallEnemy2, SmallEnemy3, LargeEnemy1 } from './enemies.js';
+import { SmallEnemy1, SmallEnemy2, SmallEnemy3 } from './small-enemies.js';
+import { LargeEnemy1 } from './large-enemies.js';
 import { SmallExplosion } from './projectiles.js';
 
 class Level1EnemyGenerator {
@@ -35,7 +36,7 @@ class Level1EnemyGenerator {
                 return ship;
             }
         });
-        this.EnemyArray.forEach((ship, index) => {
+        this.EnemyArray.forEach((ship) => {
             if(ship.enemyType === 'Small Enemy 1') {
                 if(
                     ship.x >= this.player.x && 
@@ -44,13 +45,13 @@ class Level1EnemyGenerator {
                     ) {
                         this.player.health -= 20;
                         this.explosionArray.push(new SmallExplosion(ship.x, ship.y, this.ui));
-                        this.EnemyArray.splice(index, 1);
+                        ship.destroyed = true;
                 } else if(ship.y === this.ui.canvas.height) {
                     ship.destroyed = true;
                 }
             }
         });
-        this.LaserArray.forEach((laser, index) => {
+        this.LaserArray.forEach((laser) => {
             if(
                 laser.x >= this.player.x && 
                 laser.x < (this.player.x + this.player.width) &&
@@ -58,16 +59,18 @@ class Level1EnemyGenerator {
                 ) {
                     this.player.health -= laser.damage;
                     this.explosionArray.push(new SmallExplosion(laser.x, laser.y, this.ui));
-                    this.LaserArray.splice(index, 1);
+                    laser.offScreen = true;
             }
             if(laser.y >= this.ui.canvas.height) {
-                this.LaserArray.splice(index, 1);
+                laser.offScreen = true;
             }
-        })
+        });
     }
     CompleteLevel() {
         localStorage.setItem('Game Level', JSON.stringify(2));
         this.ui.missionCompleteMenu.showModal();
+        this.ui.damageStat = this.player.damageStat;
+        this.ui.armorStat = this.player.healthStat;
     }
     AddFinalBoss() {
         if(this.player.enemiesDestroyed >= 10 && !this.ui.gameMenu.open && this.finalBossReleased === false) {
@@ -84,6 +87,11 @@ class Level1EnemyGenerator {
         }
     }
     ControlEnemies() {
+        this.EnemyArray = this.EnemyArray.filter((enemy) => {
+            if(!enemy.destroyed) {
+                return enemy;
+            }
+        });
         this.EnemyArray.forEach((ship) => {
             ship.Draw();
             ship.UpdatePosition();
@@ -91,6 +99,11 @@ class Level1EnemyGenerator {
         });
     }
     ControlLasers() {
+        this.LaserArray = this.LaserArray.filter((laser) => {
+            if(!laser.offScreen) {
+                return laser;
+            }
+        });
         this.LaserArray.forEach((laser) => {
             laser.Draw();
             laser.UpdatePosition();
@@ -153,6 +166,7 @@ function animationLoop() {
         game.water.ControlWater();
         game.healthBar.Draw();
         game.player.ControlProjectiles();
+        game.player.GameOver();
     }
     requestAnimationFrame(animationLoop);
 }
