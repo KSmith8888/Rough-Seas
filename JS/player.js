@@ -30,6 +30,12 @@ class PlayerClass {
             }
         }
     }
+    GameOver() {
+        if(this.health <= 0) {
+            alert('Game Over, please try again!');
+            location.href = './index.html';
+        }
+    }
     ControlProjectiles() {
         this.firedProjectiles = this.firedProjectiles.filter((projectile) => {
             if(!projectile.offScreen && !projectile.hit) {
