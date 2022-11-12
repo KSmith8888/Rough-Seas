@@ -156,4 +156,44 @@ class SmallExplosion {
     }
 }
 
-export { Shell, Bullet, Rocket, SmallLaserShot, LargeLaserShot, SmallExplosion };
+class LargeExplosion {
+    constructor(x, y, userInterface, player, generator) {
+        this.width = 65;
+        this.height = 65;
+        this.ui = userInterface;
+        this.player = player;
+        this.generator = generator;
+        this.x = x - (this.width / 2);
+        this.y = y - (this.height / 2);
+        this.impactDamage = true;
+        this.image = new Image(this.width, this.height);
+        this.image.src = 'Images/largeExplosionImage.png';
+        this.activeFrames = 0;
+    }
+    Draw() {
+        this.ui.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+        this.activeFrames++;
+    }
+    Collision() {
+        if(
+            this.x + this.width >= this.player.x && 
+            this.x < (this.player.x + this.player.width) &&
+            this.y + this.height > (this.ui.canvas.height - this.player.height)
+            ) {
+                this.player.health -= 4;
+        }
+        this.generator.EnemyArray.forEach((enemy) => {
+            if(
+                this.x + this.width >= enemy.x && 
+                this.x < (enemy.x + enemy.width) &&
+                this.y + this.height > (enemy.y - enemy.height) &&
+                this.y < (enemy.y + enemy.height) &&
+                !enemy.boss
+            ) {
+                enemy.destroyed = true;
+            }
+        });
+    }
+}
+
+export { Shell, Bullet, Rocket, SmallLaserShot, LargeLaserShot, SmallExplosion, LargeExplosion };
