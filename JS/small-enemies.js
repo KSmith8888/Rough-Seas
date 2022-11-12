@@ -1,4 +1,4 @@
-import { SmallLaserShot, LargeLaserShot, SmallExplosion} from './projectiles.js';
+import { SmallLaserShot, SmallExplosion, LargeExplosion} from './projectiles.js';
 
 class SmallEnemy1 {
     constructor(generator, player, userInterface) {
@@ -127,7 +127,7 @@ class SmallEnemy3 {
         this.randomYNumber = Math.floor(Math.random() * 300);
         this.fireLaser = setInterval(() => {
             if(!this.destroyed && !this.ui.gameMenu.open) {
-                this.generator.LaserArray.push(new SmallLaserShot(this.x, this.y, this.ui));
+                this.generator.LaserArray.push(new SmallLaserShot(this.x, this.y, this.ui, this.player, this.generator));
             }
         }, 5000);
     }
@@ -165,40 +165,36 @@ class SmallEnemy3 {
     }
 }
 
-class LargeEnemy1 {
+class SmallEnemy4 {
     constructor(generator, player, userInterface) {
         this.player = player;
         this.generator = generator;
         this.ui = userInterface;
-        this.enemyType = 'Large Enemy 1';
-        this.health = 100;
-        this.width = 50;
-        this.height = 60;
+        this.enemyType = 'Small Enemy 4';
+        this.health = 5;
+        this.width = 24;
+        this.height = 20;
         this.x = Math.floor(Math.random() * this.ui.canvas.width);
         this.y = 0;
-        this.image = new Image(50, 60);
-        this.image.src = 'Images/Enemies/largeEnemy1.png';
+        this.image = new Image(24, 20);
+        this.image.src = 'Images/Enemies/smallEnemy4.png';
         this.destroyed = false;
         this.randomXNumber = Math.floor(Math.random() * 250);
-        this.randomYNumber = Math.floor(Math.random() * 30);
-        this.fireLaser = setInterval(() => {
-            if(!this.destroyed && !this.ui.gameMenu.open) {
-                this.generator.LaserArray.push(new LargeLaserShot(this.x, this.y + (this.height / 2), this.ui));
-                this.generator.LaserArray.push(new LargeLaserShot(this.x + 45, this.y + (this.height / 2), this.ui));
-            }
-        }, 5000);
     }
     Draw() {
         this.ui.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
     }
     UpdatePosition() {
-        if(this.x < this.player.x + this.randomXNumber) {
-            this.x += 1;
-        } else {
-            this.x -= 1;
-        }
-        if(this.y < (40 + this.randomYNumber)) {
+        if(this.y < this.ui.canvas.height) {
             this.y += 2;
+            if(this.x < (this.player.x + this.randomXNumber)) {
+                this.x += 2;
+            } else {
+                this.x -= 2;
+            }
+            
+        } else {
+            this.y = this.ui.canvas.height;
         }
     }
     Hit() {
@@ -212,10 +208,9 @@ class LargeEnemy1 {
                 ) {
                     projectile.hit = true;
                     this.health -= (projectile.damage + this.player.damageStat);
-                    this.generator.explosionArray.push(new SmallExplosion(this.x, this.y, this.ui));
+                    this.generator.explosionArray.push(new LargeExplosion(this.x, this.y, this.ui, this.player, this.generator));
                     if(this.health <= 0) {
                         this.destroyed = true;
-                        this.generator.finalBossDestroyed = true;
                         this.player.enemiesDestroyed += 1;
                     }
                 }
@@ -223,4 +218,4 @@ class LargeEnemy1 {
     }
 }
 
-export { SmallEnemy1, SmallEnemy2, SmallEnemy3, LargeEnemy1 };
+export { SmallEnemy1, SmallEnemy2, SmallEnemy3, SmallEnemy4 };
