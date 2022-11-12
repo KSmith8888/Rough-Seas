@@ -133,4 +133,47 @@ class OceanSurface {
     }
 }
 
-export { Clouds, CitySkyline, OceanSurface };
+class Tornado {
+    constructor(userInterface, water) {
+        this.ui = userInterface;
+        this.water = water;
+        this.width = 100;
+        this.height = 130;
+        this.x = this.ui.canvas.width;
+        this.y = (this.ui.canvas.height - (this.water.height + this.height));
+        this.imageArray = ['Images/Tornado/tornadoLarge1.png', 'Images/Tornado/tornadoLarge2.png', 'Images/Tornado/tornadoLarge3.png', 'Images/Tornado/tornadoLarge4.png'];
+        this.frame = 0;
+        this.image = new Image(this.width, this.height);
+        this.image.src = this.imageArray[this.frame];
+        this.alternateFrame = false;
+        this.reachedMidway = false;
+        this.offScreen = false;
+    }
+    UpdatePosition() {
+        if(this.x > (this.ui.canvas.width / 2) && !this.reachedMidway) {
+            this.x -= .5;
+        } else {
+            this.reachedMidway = true;
+            this.x += .5;
+        }
+        if(this.x > this.ui.canvas.width + this.width) {
+            this.offScreen = true;
+        }
+    }
+    Draw() {
+        if(this.alternateFrame) {
+            if(this.frame < (this.imageArray.length - 1)) {
+                this.frame++;
+            } else {
+                this.frame = 0;
+            }
+            this.alternateFrame = false;
+        } else {
+            this.alternateFrame = true;
+        }
+        this.image.src = this.imageArray[this.frame];
+        this.ui.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+    }
+}
+
+export { Clouds, CitySkyline, OceanSurface, Tornado };
