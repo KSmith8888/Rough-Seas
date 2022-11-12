@@ -1,52 +1,9 @@
 import { UserInterface, EventListeners } from './user-interface.js';
 import { PlayerClass, PlayerHealthBar, WeaponClass } from './player.js';
-import { Clouds, OceanSurface } from './background.js';
-import { SmallEnemy1, SmallEnemy3, LargeEnemy1 } from './enemies.js';
-import { SmallExplosion } from './projectiles.js';
-
-class Tornado {
-    constructor(userInterface, water) {
-        this.ui = userInterface;
-        this.water = water;
-        this.width = 100;
-        this.height = 130;
-        this.x = this.ui.canvas.width;
-        this.y = (this.ui.canvas.height - (this.water.height + this.height));
-        this.imageArray = ['Images/Tornado/tornadoLarge1.png', 'Images/Tornado/tornadoLarge2.png', 'Images/Tornado/tornadoLarge3.png', 'Images/Tornado/tornadoLarge4.png'];
-        this.frame = 0;
-        this.image = new Image(this.width, this.height);
-        this.image.src = this.imageArray[this.frame];
-        this.alternateFrame = false;
-        this.reachedMidway = false;
-        this.offScreen = false;
-    }
-    UpdatePosition() {
-        if(this.x > (this.ui.canvas.width / 2) && !this.reachedMidway) {
-            this.x -= .5;
-        } else {
-            this.reachedMidway = true;
-            this.x += .5;
-        }
-        if(this.x > this.ui.canvas.width + this.width) {
-            this.offScreen = true;
-        }
-    }
-    Draw() {
-        if(this.alternateFrame) {
-            if(this.frame < (this.imageArray.length - 1)) {
-                this.frame++;
-            } else {
-                this.frame = 0;
-            }
-            this.alternateFrame = false;
-        } else {
-            this.alternateFrame = true;
-        }
-        this.image.src = this.imageArray[this.frame];
-        this.ui.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
-    }
-}
-
+import { Clouds, OceanSurface, Tornado } from './background.js';
+import { SmallEnemy1, SmallEnemy3, SmallEnemy4 } from './small-enemies.js';
+import { LargeEnemy2 } from './large-enemies.js';
+import { SmallExplosion, LargeExplosion } from './projectiles.js';
 
 class Level2EnemyGenerator {
     constructor(player, userInterface, water) {
@@ -68,12 +25,17 @@ class Level2EnemyGenerator {
             if(this.EnemyArray.length < 15 && !this.ui.gameMenu.open) {
                 this.EnemyArray.push(new SmallEnemy3(this, this.player, this.ui));
             }
+        }, 10000);
+        this.addSmallEnemy4 = setInterval(() => {
+            if(this.EnemyArray.length < 15 && !this.ui.gameMenu.open) {
+                this.EnemyArray.push(new SmallEnemy4(this, this.player, this.ui));
+            }
         }, 12000);
         this.addTornado = setInterval(() => {
             if(this.tornadoArray.length < 15 && !this.ui.gameMenu.open) {
                 this.tornadoArray.push(new Tornado(this.ui, this.water));
             }
-        }, 8000);
+        }, 18000);
     }
     Collision() {
         this.EnemyArray = this.EnemyArray.filter((ship) => {
@@ -81,7 +43,7 @@ class Level2EnemyGenerator {
                 return ship;
             }
         });
-        this.EnemyArray.forEach((ship, index) => {
+        this.EnemyArray.forEach((ship) => {
             if(ship.enemyType === 'Small Enemy 1') {
                 if(
                     ship.x >= this.player.x && 
@@ -90,13 +52,25 @@ class Level2EnemyGenerator {
                     ) {
                         this.player.health -= 20;
                         this.explosionArray.push(new SmallExplosion(ship.x, ship.y, this.ui));
-                        this.EnemyArray.splice(index, 1);
+                        ship.destroyed = true;
+                } else if(ship.y === this.ui.canvas.height) {
+                    ship.destroyed = true;
+                }
+            }
+            if(ship.enemyType === 'Small Enemy 4') {
+                if(
+                    ship.x >= this.player.x && 
+                    ship.x < (this.player.x + this.player.width) &&
+                    ship.y > (this.ui.canvas.height - this.player.height)
+                    ) {
+                        this.explosionArray.push(new LargeExplosion(ship.x, ship.y, this.ui, this.player, this));
+                        ship.destroyed = true;
                 } else if(ship.y === this.ui.canvas.height) {
                     ship.destroyed = true;
                 }
             }
         });
-        this.LaserArray.forEach((laser, index) => {
+        this.LaserArray.forEach((laser) => {
             if(
                 laser.x >= this.player.x && 
                 laser.x < (this.player.x + this.player.width) &&
@@ -131,7 +105,8 @@ class Level2EnemyGenerator {
             clearInterval(this.addSmallEnemy1);
             clearInterval(this.addSmallEnemy2);
             clearInterval(this.addSmallEnemy3);
-            this.EnemyArray.push(new LargeEnemy1(this, this.player, this.ui));
+            clearInterval(this.addSmallEnemy4);
+            this.EnemyArray.push(new LargeEnemy2(this, this.player, this.ui));
         }
         if(this.finalBossReleased) {
             if(this.finalBossDestroyed) {
@@ -140,6 +115,11 @@ class Level2EnemyGenerator {
         }
     }
     ControlEnemies() {
+        this.EnemyArray = this.EnemyArray.filter((enemy) => {
+            if(!enemy.destroyed) {
+                return enemy;
+            }
+        });
         this.EnemyArray.forEach((ship) => {
             ship.Draw();
             ship.UpdatePosition();
@@ -165,6 +145,9 @@ class Level2EnemyGenerator {
         });
         this.explosionArray.forEach((explosion) => {
             explosion.Draw();
+            if(explosion.impactDamage) {
+                explosion.Collision();
+            }
         });
     }
     ControlTornados() {
