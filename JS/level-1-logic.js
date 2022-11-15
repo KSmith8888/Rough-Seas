@@ -68,9 +68,13 @@ class Level1EnemyGenerator {
     }
     CompleteLevel() {
         localStorage.setItem('Game Level', JSON.stringify(2));
-        this.ui.missionCompleteMenu.showModal();
-        this.ui.damageStat = this.player.damageStat;
-        this.ui.armorStat = this.player.healthStat;
+        setTimeout(() => {
+            if(!this.ui.missionCompleteMenu.open) {
+                this.ui.missionCompleteMenu.showModal();
+                this.ui.damageStat = this.player.damageStat;
+                this.ui.armorStat = this.player.healthStat;
+            }
+        }, 500);
     }
     AddFinalBoss() {
         if(this.player.enemiesDestroyed >= 10 && !this.ui.gameMenu.open && this.finalBossReleased === false) {
