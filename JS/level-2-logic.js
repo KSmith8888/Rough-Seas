@@ -1,6 +1,6 @@
 import { UserInterface, EventListeners } from './user-interface.js';
 import { PlayerClass, PlayerHealthBar, WeaponClass } from './player.js';
-import { Clouds, OceanSurface, Tornado } from './background.js';
+import { Clouds, OceanSurface, Tornado, TornadoRight, TornadoLeft } from './background.js';
 import { SmallEnemy1, SmallEnemy3, SmallEnemy4 } from './small-enemies.js';
 import { LargeEnemy2 } from './large-enemies.js';
 import { SmallExplosion, LargeExplosion } from './projectiles.js';
@@ -32,8 +32,13 @@ class Level2EnemyGenerator {
             }
         }, 12000);
         this.addTornado = setInterval(() => {
+            const randomNum = Math.floor(Math.random() * 10);
             if(this.tornadoArray.length < 15 && !this.ui.gameMenu.open) {
-                this.tornadoArray.push(new Tornado(this.ui, this.water));
+                if(randomNum > 5) {
+                    this.tornadoArray.push(new TornadoRight(this.ui, this.water));
+                } else {
+                    this.tornadoArray.push(new TornadoLeft(this.ui, this.water));
+                }
             }
         }, 18000);
     }
@@ -86,7 +91,7 @@ class Level2EnemyGenerator {
         });
         this.tornadoArray.forEach((tornado) => {
             if(
-                tornado.x >= this.player.x && 
+                (tornado.x + tornado.width) >= this.player.x && 
                 tornado.x < (this.player.x + this.player.width) 
                 ) {
                     this.player.health -= 1;
@@ -95,9 +100,13 @@ class Level2EnemyGenerator {
     }
     CompleteLevel() {
         localStorage.setItem('Game Level', JSON.stringify(3));
-        this.ui.missionCompleteMenu.showModal();
-        this.ui.damageStat = this.player.damageStat;
-        this.ui.armorStat = this.player.healthStat;
+        setTimeout(() => {
+            if(!this.ui.missionCompleteMenu.open) {
+                this.ui.missionCompleteMenu.showModal();
+                this.ui.damageStat = this.player.damageStat;
+                this.ui.armorStat = this.player.healthStat;
+            }
+        }, 500);
     }
     AddFinalBoss() {
         if(this.player.enemiesDestroyed >= 10 && !this.ui.gameMenu.open && this.finalBossReleased === false) {
@@ -109,7 +118,7 @@ class Level2EnemyGenerator {
             this.EnemyArray.push(new LargeEnemy2(this, this.player, this.ui));
         }
         if(this.finalBossReleased) {
-            if(this.finalBossDestroyed) {
+            if(this.finalBossDestroyed && !this.ui.missionCompleteMenu.open) {
                 this.CompleteLevel();
             }
         }
