@@ -15,19 +15,23 @@ class PlayerClass {
         this.firedProjectiles = [];
         this.image = new Image(255, 80);
         this.image.src = 'Images/playerShipV3.png';
+        this.shipMovement = 'None';
     }
     DrawShip() {
+        if (this.x >= 1 && this.shipMovement === 'Left') {
+            this.x -= 1;
+        } else if (this.x < (this.ui.canvas.width - this.width) && this.shipMovement === 'Right') {
+            this.x += 1;
+        }
         this.ui.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
     }
     MoveShip(direction) {
-        if(direction === 'ArrowLeft') {
-            if (this.x >= 5) {
-                this.x -= 5;
-            }
-        } else if(direction === 'ArrowRight') {
-            if (this.x < (this.ui.canvas.width - this.width)) {
-                this.x += 5;
-            }
+        if(direction === 'KeyA') {
+            this.shipMovement = 'Left';
+        } else if(direction === 'KeyD') {
+            this.shipMovement = 'Right';
+        } else if(direction === 'KeyW') {
+            this.shipMovement = 'None';
         }
     }
     GameOver() {
