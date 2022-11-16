@@ -12,6 +12,8 @@ class UserInterface {
         this.exitGameBtn = document.getElementById('exit-game-button');
         this.missionCompleteMenu = document.getElementById('mission-complete-menu');
         this.missionCompleteForm = document.getElementById('mission-complete-form');
+        this.armorStat = document.getElementById('armor-stat');
+        this.damageStat = document.getElementById('damage-stat');
     }
 }
 
@@ -21,13 +23,13 @@ class EventListeners {
         this.weapon = weapon;
         this.ui = userInterface;
         this.keyEvent = document.addEventListener('keydown', (event) => {
-            if(event.code === 'ArrowLeft' || event.code === 'ArrowRight') {
+            if(event.code === 'KeyA' || event.code === 'KeyD' || event.code === 'KeyW') {
                 this.player.MoveShip(event.code);
             } 
-            if(event.code === 'KeyW') {
+            if(event.code === 'ArrowUp') {
                 this.weapon.FireProjectile();
             } 
-            if(event.code === 'KeyA') {
+            if(event.code === 'ArrowLeft') {
                 if(weapon.weaponAngle > 0) {
                     this.weapon.weaponAngle -= 1;
                     this.weapon.cannonImage.src = this.weapon.cannonImageArray[weapon.weaponAngle];
@@ -35,7 +37,7 @@ class EventListeners {
                     this.weapon.launcherImage.src = this.weapon.launcherImageArray[weapon.weaponAngle];
                 }
             } 
-            if(event.code === 'KeyD') {
+            if(event.code === 'ArrowRight') {
                 if(weapon.weaponAngle < (weapon.cannonImageArray.length - 1)) {
                     this.weapon.weaponAngle += 1;
                     this.weapon.cannonImage.src = this.weapon.cannonImageArray[weapon.weaponAngle];
@@ -46,6 +48,28 @@ class EventListeners {
             if(event.code === 'KeyM') {
                 this.ui.menuSound.play().catch((error) => {console.error(error)});
                 this.ui.gameMenu.showModal();
+            }
+        });
+        this.hoverEvent = document.addEventListener('mousemove', (event) => {
+            const playerMidpoint = player.x + (player.width / 2)
+            if(event.clientX >= (playerMidpoint - 30) && event.clientX <= (playerMidpoint + 30)) {
+                this.weapon.weaponAngle = 2;
+            } else if(event.clientX < (playerMidpoint - 30) && event.clientY <= (this.ui.canvas.height - 200)) {
+                this.weapon.weaponAngle = 1;
+            } else if(event.clientX < (playerMidpoint - 30) && event.clientY > (this.ui.canvas.height - 200)) {
+                this.weapon.weaponAngle = 0;
+            } else if(event.clientX > (playerMidpoint + 30) && event.clientY <= (this.ui.canvas.height - 200)) {
+                this.weapon.weaponAngle = 3;
+            } else if(event.clientX > (playerMidpoint + 30) && event.clientY > (this.ui.canvas.height - 200)) {
+                this.weapon.weaponAngle = 4;
+            }
+            this.weapon.cannonImage.src = this.weapon.cannonImageArray[weapon.weaponAngle];
+            this.weapon.machineImage.src = this.weapon.machineImageArray[weapon.weaponAngle];
+            this.weapon.launcherImage.src = this.weapon.launcherImageArray[weapon.weaponAngle];
+        });
+        this.clickEvent = document.addEventListener('click', () => {
+            if(!this.ui.gameMenu.open && !this.ui.missionCompleteMenu.open) {
+                this.weapon.FireProjectile();
             }
         });
         this.openMenu = this.ui.menuIcon.addEventListener('click', () => {
