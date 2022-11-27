@@ -205,4 +205,22 @@ class TornadoLeft extends Tornado {
     }
 }
 
-export { Clouds, CitySkyline, OceanSurface, Tornado, TornadoRight, TornadoLeft };
+class Lightning {
+    constructor(userInterface) {
+        this.ui = userInterface;
+        this.width = 175;
+        this.height = 472;
+        this.x = Math.floor(Math.random() * this.ui.canvas.width);
+        this.y = 0;
+        //this.y = this.ui.canvas.height - this.height;
+        this.image = new Image(this.width, this.height);
+        this.image.src = 'Images/lightning.png';
+        this.activeFrames = 0;
+    }
+    Draw() {
+        this.activeFrames++;
+        this.ui.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+    }
+}
+
+export { Clouds, CitySkyline, OceanSurface, Tornado, TornadoRight, TornadoLeft, Lightning };
