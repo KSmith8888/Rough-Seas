@@ -54,7 +54,9 @@ class PlayerClass {
     StartNextMission() {
         if(JSON.parse(localStorage.getItem('Game Level')) === 2) {
             location.href = './level-2-monsoon.html';
-        } else if(JSON.parse(localStorage.getItem('Game Level')) === 3) {
+        } else if (JSON.parse(localStorage.getItem('Game Level')) === 3) {
+            location.href = './level-3-electric.html';
+        } else if(JSON.parse(localStorage.getItem('Game Level')) === 4) {
             alert('The level you have reached is not yet available. Please start a new game or come back when the game is finished to continue.');
             location.href = './index.html';
         }
