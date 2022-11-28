@@ -14,12 +14,19 @@ class SmallEnemy1 {
         this.image = new Image(28, 28);
         this.image.src = 'Images/Enemies/smallEnemy1.png';
         this.destroyed = false;
-        this.randomXNumber = Math.floor(Math.random() * 250);
+        this.randomXNumber = Math.floor(Math.random() * this.player.width);
+        this.updateXTarget = 0;
     }
     Draw() {
         this.ui.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
     }
     UpdatePosition() {
+        if(this.updateXTarget === 15) {
+            this.randomXNumber = Math.floor(Math.random() * this.player.width);
+            this.updateXTarget = 0;
+        } else {
+            this.updateXTarget++;
+        }
         if(this.y < this.ui.canvas.height) {
             this.y += 2;
             if(this.x < (this.player.x + this.randomXNumber)) {
@@ -67,8 +74,9 @@ class SmallEnemy2 {
         this.image = new Image(22, 32);
         this.image.src = 'Images/Enemies/smallEnemy2.png';
         this.destroyed = false;
-        this.randomXNumber = Math.floor(Math.random() * 250);
+        this.randomXNumber = Math.floor(Math.random() * this.player.width);
         this.randomYNumber = Math.floor(Math.random() * 30);
+        this.updateXTarget = 0;
         this.fireLaser = setInterval(() => {
             if(!this.destroyed && !this.ui.gameMenu.open) {
                 this.generator.LaserArray.push(new SmallLaserShot(this.x, this.y, this.ui));
@@ -79,6 +87,12 @@ class SmallEnemy2 {
         this.ui.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
     }
     UpdatePosition() {
+        if(this.updateXTarget === 15) {
+            this.randomXNumber = Math.floor(Math.random() * this.player.width);
+            this.updateXTarget = 0;
+        } else {
+            this.updateXTarget++;
+        }
         if(this.x < this.player.x + this.randomXNumber) {
             this.x += 1;
         } else {
@@ -123,8 +137,9 @@ class SmallEnemy3 {
         this.image = new Image(26, 34);
         this.image.src = 'Images/Enemies/smallEnemy3.png';
         this.destroyed = false;
-        this.randomXNumber = Math.floor(Math.random() * 250);
+        this.randomXNumber = Math.floor(Math.random() * this.player.width);
         this.randomYNumber = Math.floor(Math.random() * 300);
+        this.updateXTarget = 0;
         this.fireLaser = setInterval(() => {
             if(!this.destroyed && !this.ui.gameMenu.open) {
                 this.generator.LaserArray.push(new SmallLaserShot(this.x, this.y, this.ui, this.player, this.generator));
@@ -135,6 +150,13 @@ class SmallEnemy3 {
         this.ui.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
     }
     UpdatePosition() {
+        //Periodically change the X coord position that the enemy is trying to get to above the player
+        if(this.updateXTarget === 15) {
+            this.randomXNumber = Math.floor(Math.random() * this.player.width);
+            this.updateXTarget = 0;
+        } else {
+            this.updateXTarget++;
+        }
         if(this.x < this.player.x + this.randomXNumber) {
             this.x += 1;
         } else {
@@ -179,12 +201,19 @@ class SmallEnemy4 {
         this.image = new Image(24, 20);
         this.image.src = 'Images/Enemies/smallEnemy4.png';
         this.destroyed = false;
-        this.randomXNumber = Math.floor(Math.random() * 250);
+        this.randomXNumber = Math.floor(Math.random() * this.player.width);
+        this.updateXTarget = 0;
     }
     Draw() {
         this.ui.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
     }
     UpdatePosition() {
+        if(this.updateXTarget === 15) {
+            this.randomXNumber = Math.floor(Math.random() * this.player.width);
+            this.updateXTarget = 0;
+        } else {
+            this.updateXTarget++;
+        }
         if(this.y < this.ui.canvas.height) {
             this.y += 2;
             if(this.x < (this.player.x + this.randomXNumber)) {
