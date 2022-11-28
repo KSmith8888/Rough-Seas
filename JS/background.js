@@ -206,16 +206,16 @@ class TornadoLeft extends Tornado {
 }
 
 class Lightning {
-    constructor(userInterface) {
+    constructor(userInterface, x, y) {
         this.ui = userInterface;
-        this.width = 175;
-        this.height = 472;
-        this.x = Math.floor(Math.random() * this.ui.canvas.width);
-        this.y = 0;
-        //this.y = this.ui.canvas.height - this.height;
+        this.x = x;
+        this.y = y;
+        this.width = 115;
+        this.height = 273;
         this.image = new Image(this.width, this.height);
         this.image.src = 'Images/lightning.png';
         this.activeFrames = 0;
+        this.hitPlayer = false;
     }
     Draw() {
         this.activeFrames++;
