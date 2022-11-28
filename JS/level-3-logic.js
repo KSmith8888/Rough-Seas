@@ -6,10 +6,11 @@ import { LargeEnemy2 } from './large-enemies.js';
 import { SmallExplosion, LargeExplosion } from './projectiles.js';
 
 class Level3EnemyGenerator {
-    constructor(player, userInterface, water) {
+    constructor(player, userInterface, water, cloudGenerator) {
         this.player = player;
         this.ui = userInterface;
         this.water = water;
+        this.cloudGenerator = cloudGenerator;
         this.EnemyArray = [];
         this.LaserArray = [];
         this.explosionArray = [];
@@ -32,7 +33,10 @@ class Level3EnemyGenerator {
             }
         }, 12000);
         this.addLightning = setInterval(() => {
-            this.lightningArray.push(new Lightning(this.ui));
+            const randomCloud = Math.floor(Math.random() * this.cloudGenerator.cloudArray.length)
+            const boltX = this.cloudGenerator.cloudArray[randomCloud].x + (this.cloudGenerator.cloudArray[randomCloud].width / 4);
+            const boltY = this.cloudGenerator.cloudArray[randomCloud].y + (this.cloudGenerator.cloudArray[randomCloud].height - 25);
+            this.lightningArray.push(new Lightning(this.ui, boltX, boltY));
         }, 8000);
     }
     Collision() {
@@ -82,6 +86,17 @@ class Level3EnemyGenerator {
                 laser.offScreen = true;
             }
         });
+        this.lightningArray.forEach((bolt) => {
+            if(
+                bolt.x >= this.player.x &&
+                bolt.x < (this.player.x + this.player.width) &&
+                bolt.y + bolt.height >= this.player.y &&
+                bolt.hitPlayer === false
+            ) {
+                this.player.health -= 20;
+                bolt.hitPlayer = true;
+            }
+        })
     }
     CompleteLevel() {
         localStorage.setItem('Game Level', JSON.stringify(4));
@@ -146,7 +161,7 @@ class Level3EnemyGenerator {
     }
     ControlLightning() {
         this.lightningArray = this.lightningArray.filter((bolt) => {
-            if(bolt.activeFrames < 10) {
+            if(bolt.activeFrames < 15) {
                 return bolt;
             }
         });
@@ -165,7 +180,7 @@ class Game {
         this.events = new EventListeners(this.player, this.weapon, this.ui);
         this.cloudGenerator = new Clouds(this.ui);
         this.water = new OceanSurface(this.ui);
-        this.level3Generator = new Level3EnemyGenerator(this.player, this.ui, this.water);
+        this.level3Generator = new Level3EnemyGenerator(this.player, this.ui, this.water, this.cloudGenerator);
     }
     LoadSaveData() {
         if(localStorage.getItem('Health Stat') !== null) {
@@ -188,11 +203,11 @@ game.cloudGenerator.AddInitialClouds();
 function animationLoop() {
     if(!game.ui.gameMenu.open && !game.ui.missionCompleteMenu.open) {
         game.ui.ctx.clearRect(0, 0, game.ui.canvas.width, game.ui.canvas.height);
+        game.level3Generator.ControlLightning();
         game.cloudGenerator.ControlClouds();
         game.weapon.DrawWeapon();
         game.player.DrawShip();
         game.level3Generator.ControlEnemies();
-        game.level3Generator.ControlLightning();
         game.level3Generator.Collision();
         game.level3Generator.AddFinalBoss();
         game.level3Generator.ControlLasers();
