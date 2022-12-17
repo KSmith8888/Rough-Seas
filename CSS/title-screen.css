@@ -2,6 +2,12 @@ body {
     margin: 0;
     height: 100vh;
     background-color: lightblue;
+    background-image: url('../Images/Background/title-background.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: bottom;
+    font-family: 'Courier New', Courier, monospace;
+    color: black;
 }
 
 #container {
@@ -22,15 +28,21 @@ body {
 
 #header {
     text-align: center;
-    margin-bottom: 3em;
+    margin: 2em 0 1em 0;
+    padding: 0 1em;
 }
 
 .subtitle {
-    margin: 0;
+    margin: 0 0 1em 0;
+    font-size: 2rem;
+    font-weight: 700;
+    text-shadow: 1px 1px rgb(49, 6, 6);
 }
 
 h1 {
-    font-size: 2.4rem;
+    font-size: 3rem;
+    text-shadow: 2px 2px rgb(49, 6, 6);
+    border-bottom: 6px solid rgb(75, 12, 12);
 }
 
 #button-container {
@@ -39,11 +51,15 @@ h1 {
 }
 
 .button {
-    width: 10em;
+    width: 12em;
     margin: .5em;
     padding: .4em .8em;
     border-radius: 5px;
     cursor: pointer;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    background-color: rgb(204, 205, 207);
 }
 
 .button:hover, .button:focus {
