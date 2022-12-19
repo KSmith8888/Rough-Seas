@@ -4,10 +4,16 @@ class UserInterface {
         this.ctx = this.canvas.getContext('2d');
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
+        this.controlMode = 'Keyboard';
         this.menuSound = new Audio;
         this.menuSound.src = 'Audio/beep.wav';
+        this.bossMusic = new Audio;
+        this.bossMusic.src = 'Audio/boss-music.wav';
+        this.allAudio = [this.menuSound, this.bossMusic];
         this.menuIcon = document.getElementById('menu-icon');
         this.gameMenu = document.getElementById('game-menu');
+        this.controlModeBtn = document.getElementById('control-mode-button');
+        this.muteButton = document.getElementById('mute-button');
         this.closeMenuBtn = document.getElementById('close-menu-button');
         this.exitGameBtn = document.getElementById('exit-game-button');
         this.missionCompleteMenu = document.getElementById('mission-complete-menu');
@@ -51,30 +57,53 @@ class EventListeners {
             }
         });
         this.hoverEvent = document.addEventListener('mousemove', (event) => {
-            const playerMidpoint = player.x + (player.width / 2)
-            if(event.clientX >= (playerMidpoint - 30) && event.clientX <= (playerMidpoint + 30)) {
+            if(this.ui.controlMode === 'Mouse') {
+                const playerMidpoint = player.x + (player.width / 2)
+                if(event.clientX >= (playerMidpoint - 30) && event.clientX <= (playerMidpoint + 30)) {
                 this.weapon.weaponAngle = 2;
-            } else if(event.clientX < (playerMidpoint - 30) && event.clientY <= (this.ui.canvas.height - 200)) {
+                } else if(event.clientX < (playerMidpoint - 30) && event.clientY <= (this.ui.canvas.height - 200)) {
                 this.weapon.weaponAngle = 1;
-            } else if(event.clientX < (playerMidpoint - 30) && event.clientY > (this.ui.canvas.height - 200)) {
+                } else if(event.clientX < (playerMidpoint - 30) && event.clientY > (this.ui.canvas.height - 200)) {
                 this.weapon.weaponAngle = 0;
-            } else if(event.clientX > (playerMidpoint + 30) && event.clientY <= (this.ui.canvas.height - 200)) {
+                } else if(event.clientX > (playerMidpoint + 30) && event.clientY <= (this.ui.canvas.height - 200)) {
                 this.weapon.weaponAngle = 3;
-            } else if(event.clientX > (playerMidpoint + 30) && event.clientY > (this.ui.canvas.height - 200)) {
+                } else if(event.clientX > (playerMidpoint + 30) && event.clientY > (this.ui.canvas.height - 200)) {
                 this.weapon.weaponAngle = 4;
+                }
+                this.weapon.cannonImage.src = this.weapon.cannonImageArray[weapon.weaponAngle];
+                this.weapon.machineImage.src = this.weapon.machineImageArray[weapon.weaponAngle];
+                this.weapon.launcherImage.src = this.weapon.launcherImageArray[weapon.weaponAngle];
             }
-            this.weapon.cannonImage.src = this.weapon.cannonImageArray[weapon.weaponAngle];
-            this.weapon.machineImage.src = this.weapon.machineImageArray[weapon.weaponAngle];
-            this.weapon.launcherImage.src = this.weapon.launcherImageArray[weapon.weaponAngle];
         });
         this.clickEvent = document.addEventListener('click', () => {
-            if(!this.ui.gameMenu.open && !this.ui.missionCompleteMenu.open) {
+            if(!this.ui.gameMenu.open && !this.ui.missionCompleteMenu.open && this.ui.controlMode === 'Mouse') {
                 this.weapon.FireProjectile();
             }
         });
         this.openMenu = this.ui.menuIcon.addEventListener('click', () => {
             this.ui.menuSound.play().catch((error) => {console.error(error)});
             this.ui.gameMenu.showModal();
+        });
+        this.changeControlMode = this.ui.controlModeBtn.addEventListener('click', () => {
+            if(this.ui.controlMode === 'Keyboard') {
+                this.ui.controlMode = 'Mouse';
+                this.ui.controlModeBtn.textContent = 'Use keyboard controls';
+            } else {
+                this.ui.controlMode = 'Keyboard';
+                this.ui.controlModeBtn.textContent = 'Use mouse controls';
+            }
+        })
+        this.muteAudio = this.ui.muteButton.addEventListener('click', () => {
+            this.ui.allAudio.forEach((audio) => {
+                if(!audio.muted) {
+                    audio.muted = true;
+                    audio.pause();
+                    this.ui.muteButton.textContent = 'Unmute Audio';
+                } else {
+                    audio.muted = false;
+                    this.ui.muteButton.textContent = 'Mute Audio';
+                }
+            });
         });
         this.closeMenu = this.ui.closeMenuBtn.addEventListener('click', () => {
             this.ui.gameMenu.close();
