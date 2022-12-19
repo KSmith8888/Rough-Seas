@@ -24,7 +24,30 @@ body {
     border: 3px solid rgb(14, 14, 82);
 }
 
-#mission-complete-menu {
+#game-menu[open] {
+    min-width: 20vw;
+    min-height: 40vh;
+    background-color: rgb(151, 158, 148);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.menu-btn {
+    width: 8em;
+    border: 1px solid black;
+    font-family: 'Courier New', Courier, monospace;
+    background-color: rgb(204, 205, 207);
+    cursor: pointer;
+    padding: .2em .5em;
+    margin: 1em .5em;
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 5px;
+}
+
+#mission-complete-menu[open] {
     width: 30vw;
     height: 50vh;
     background-color: rgb(228, 227, 227);
