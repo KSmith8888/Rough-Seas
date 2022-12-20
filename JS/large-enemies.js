@@ -17,6 +17,7 @@ class LargeEnemy1 {
         this.boss = true;
         this.randomXNumber = Math.floor(Math.random() * 250);
         this.randomYNumber = Math.floor(Math.random() * 30);
+        this.updateXTarget = 0;
         this.fireLaser = setInterval(() => {
             if(!this.destroyed && !this.ui.gameMenu.open) {
                 this.generator.LaserArray.push(new LargeLaserShot(this.x, this.y + (this.height / 2), this.ui));
@@ -28,6 +29,12 @@ class LargeEnemy1 {
         this.ui.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
     }
     UpdatePosition() {
+        if(this.updateXTarget === 30) {
+            this.randomXNumber = Math.floor(Math.random() * this.player.width);
+            this.updateXTarget = 0;
+        } else {
+            this.updateXTarget++;
+        }
         if(this.x < this.player.x + this.randomXNumber) {
             this.x += 1;
         } else {
@@ -74,8 +81,9 @@ class LargeEnemy2 {
         this.image.src = 'Images/Enemies/largeEnemy2.png';
         this.destroyed = false;
         this.boss = true;
-        this.randomXNumber = Math.floor(Math.random() * 250);
+        this.randomXNumber = Math.floor(Math.random() * (this.player.width - this.width));
         this.randomYNumber = Math.floor(Math.random() * 30);
+        this.updateXTarget = 0;
         this.fireLaser = setInterval(() => {
             if(!this.destroyed && !this.ui.gameMenu.open) {
                 this.generator.LaserArray.push(new LargeLaserShot(this.x, this.y + (this.height / 4), this.ui));
@@ -87,6 +95,12 @@ class LargeEnemy2 {
         this.ui.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
     }
     UpdatePosition() {
+        if(this.updateXTarget === 30) {
+            this.randomXNumber = Math.floor(Math.random() * this.player.width);
+            this.updateXTarget = 0;
+        } else {
+            this.updateXTarget++;
+        }
         if(this.x < this.player.x + this.randomXNumber) {
             this.x += 1;
         } else {
