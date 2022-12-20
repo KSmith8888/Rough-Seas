@@ -79,6 +79,8 @@ class Level1EnemyGenerator {
     AddFinalBoss() {
         if(this.player.enemiesDestroyed >= 10 && !this.ui.gameMenu.open && this.finalBossReleased === false) {
             this.finalBossReleased = true;
+            this.ui.bossMusic.volume = 0.2;
+            this.ui.bossMusic.play();
             clearInterval(this.addSmallEnemy1);
             clearInterval(this.addSmallEnemy2);
             clearInterval(this.addSmallEnemy3);
