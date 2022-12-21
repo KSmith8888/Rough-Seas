@@ -1,4 +1,4 @@
-import { SmallLaserShot, SmallExplosion, LargeExplosion} from './projectiles.js';
+import { SmallLaserShot, SmallExplosion, LargeExplosion, LargeEMP} from './projectiles.js';
 
 class SmallEnemy1 {
     constructor(generator, player, userInterface) {
@@ -247,4 +247,64 @@ class SmallEnemy4 {
     }
 }
 
-export { SmallEnemy1, SmallEnemy2, SmallEnemy3, SmallEnemy4 };
+class SmallEnemy5 {
+    constructor(generator, player, userInterface) {
+        this.player = player;
+        this.generator = generator;
+        this.ui = userInterface;
+        this.enemyType = 'Small Enemy 5';
+        this.health = 5;
+        this.width = 36;
+        this.height = 24;
+        this.x = Math.floor(Math.random() * this.ui.canvas.width);
+        this.y = 0;
+        this.image = new Image(24, 20);
+        this.image.src = 'Images/Enemies/smallEnemy5.png';
+        this.destroyed = false;
+        this.randomXNumber = Math.floor(Math.random() * this.player.width);
+        this.updateXTarget = 0;
+    }
+    Draw() {
+        this.ui.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+    }
+    UpdatePosition() {
+        if(this.updateXTarget === 15) {
+            this.randomXNumber = Math.floor(Math.random() * this.player.width);
+            this.updateXTarget = 0;
+        } else {
+            this.updateXTarget++;
+        }
+        if(this.y < this.ui.canvas.height) {
+            this.y += 2;
+            if(this.x < (this.player.x + this.randomXNumber)) {
+                this.x += 2;
+            } else {
+                this.x -= 2;
+            }
+            
+        } else {
+            this.y = this.ui.canvas.height;
+        }
+    }
+    Hit() {
+        this.player.firedProjectiles.forEach((projectile) => {
+            if(
+                (projectile.x + projectile.width) >= this.x && 
+                projectile.x < (this.x + this.width) &&
+                (projectile.y + projectile.height) >= this.y &&
+                projectile.y < (this.y + this.height) &&
+                projectile.hit === false
+                ) {
+                    projectile.hit = true;
+                    this.health -= (projectile.damage + this.player.damageStat);
+                    this.generator.explosionArray.push(new LargeEMP(this.x, this.y, this.ui, this.player, this.generator));
+                    if(this.health <= 0) {
+                        this.destroyed = true;
+                        this.player.enemiesDestroyed += 1;
+                    }
+                }
+        });
+    }
+}
+
+export { SmallEnemy1, SmallEnemy2, SmallEnemy3, SmallEnemy4, SmallEnemy5 };
