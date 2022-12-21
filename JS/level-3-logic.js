@@ -1,9 +1,9 @@
 import { UserInterface, EventListeners } from './user-interface.js';
 import { PlayerClass, PlayerHealthBar, WeaponClass } from './player.js';
 import { Clouds, OceanSurface, Lightning } from './background.js';
-import { SmallEnemy1, SmallEnemy3, SmallEnemy4 } from './small-enemies.js';
+import { SmallEnemy1, SmallEnemy3, SmallEnemy4, SmallEnemy5 } from './small-enemies.js';
 import { LargeEnemy2 } from './large-enemies.js';
-import { SmallExplosion, LargeExplosion } from './projectiles.js';
+import { SmallExplosion, LargeExplosion, LargeEMP } from './projectiles.js';
 
 class Level3EnemyGenerator {
     constructor(player, userInterface, water, cloudGenerator) {
@@ -32,6 +32,11 @@ class Level3EnemyGenerator {
                 this.EnemyArray.push(new SmallEnemy4(this, this.player, this.ui));
             }
         }, 12000);
+        this.addSmallEnemy5 = setInterval(() => {
+            if(this.EnemyArray.length < 15 && !this.ui.gameMenu.open) {
+                this.EnemyArray.push(new SmallEnemy5(this, this.player, this.ui));
+            }
+        }, 8000);
         this.addLightning = setInterval(() => {
             const randomCloud = Math.floor(Math.random() * this.cloudGenerator.cloudArray.length)
             const boltX = this.cloudGenerator.cloudArray[randomCloud].x + (this.cloudGenerator.cloudArray[randomCloud].width / 4);
@@ -66,6 +71,18 @@ class Level3EnemyGenerator {
                     ship.y > (this.ui.canvas.height - this.player.height)
                     ) {
                         this.explosionArray.push(new LargeExplosion(ship.x, ship.y, this.ui, this.player, this));
+                        ship.destroyed = true;
+                } else if(ship.y === this.ui.canvas.height) {
+                    ship.destroyed = true;
+                }
+            }
+            if(ship.enemyType === 'Small Enemy 5') {
+                if(
+                    ship.x >= this.player.x && 
+                    ship.x < (this.player.x + this.player.width) &&
+                    ship.y > (this.ui.canvas.height - this.player.height)
+                    ) {
+                        this.explosionArray.push(new LargeEMP(ship.x, ship.y, this.ui, this.player, this));
                         ship.destroyed = true;
                 } else if(ship.y === this.ui.canvas.height) {
                     ship.destroyed = true;
