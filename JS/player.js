@@ -12,26 +12,44 @@ class PlayerClass {
         this.health = 100;
         this.weaponChoice = 'Cannon';
         this.enemiesDestroyed = 0;
+        this.disabled = false;
+        this.empDisabledFrames = 0;
         this.firedProjectiles = [];
         this.image = new Image(255, 80);
         this.image.src = 'Images/playerShipV3.png';
         this.shipMovement = 'None';
     }
     DrawShip() {
-        if (this.x >= 1 && this.shipMovement === 'Left') {
+        if (this.x >= 1 && this.shipMovement === 'Left' && !this.disabled) {
             this.x -= 1;
-        } else if (this.x < (this.ui.canvas.width - this.width) && this.shipMovement === 'Right') {
+        } else if (this.x < (this.ui.canvas.width - this.width) && this.shipMovement === 'Right' && !this.disabled) {
             this.x += 1;
         }
         this.ui.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
     }
     MoveShip(direction) {
-        if(direction === 'KeyA') {
-            this.shipMovement = 'Left';
-        } else if(direction === 'KeyD') {
-            this.shipMovement = 'Right';
-        } else if(direction === 'KeyW') {
+        if(!this.disabled) {
+            switch(direction) {
+                case('KeyA'): {
+                    this.shipMovement = 'Left';
+                    break;
+                }
+                case('KeyD'): {
+                    this.shipMovement = 'Right';
+                    break;
+                }
+                case('KeyW'): {
+                    this.shipMovement = 'None';
+                    break;
+                }
+            }
+        } else {
             this.shipMovement = 'None';
+            this.empDisabledFrames += 1;
+            if(this.empDisabledFrames === 20) {
+                this.empDisabledFrames = 0;
+                this.disabled = false;
+            }
         }
     }
     GameOver() {
