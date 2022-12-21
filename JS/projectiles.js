@@ -196,4 +196,33 @@ class LargeExplosion {
     }
 }
 
-export { Shell, Bullet, Rocket, SmallLaserShot, LargeLaserShot, SmallExplosion, LargeExplosion };
+class LargeEMP {
+    constructor(x, y, userInterface, player, generator) {
+        this.width = 64;
+        this.height = 64;
+        this.ui = userInterface;
+        this.player = player;
+        this.generator = generator;
+        this.x = x - (this.width / 2);
+        this.y = y - (this.height / 2);
+        this.impactDamage = true;
+        this.image = new Image(this.width, this.height);
+        this.image.src = 'Images/largeEMPImage.png';
+        this.activeFrames = 0;
+    }
+    Draw() {
+        this.ui.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+        this.activeFrames++;
+    }
+    Collision() {
+        if(
+            this.x + this.width >= this.player.x && 
+            this.x < (this.player.x + this.player.width) &&
+            this.y + this.height > (this.ui.canvas.height - this.player.height)
+            ) {
+                this.player.disabled = true;
+        }
+    }
+}
+
+export { Shell, Bullet, Rocket, SmallLaserShot, LargeLaserShot, SmallExplosion, LargeExplosion, LargeEMP };
