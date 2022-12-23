@@ -7,9 +7,11 @@ class UserInterface {
         this.controlMode = 'Keyboard';
         this.menuSound = new Audio;
         this.menuSound.src = 'Audio/beep.wav';
-        this.bossMusic = new Audio;
-        this.bossMusic.src = 'Audio/boss-music.wav';
-        this.allAudio = [this.menuSound, this.bossMusic];
+        this.bossSound = new Audio;
+        this.bossSound.src = 'Audio/boss-sound.wav';
+        this.levelMusic = new Audio;
+        this.levelMusic.src = 'Audio/level-music.ogg';
+        this.allAudio = [this.menuSound, this.levelMusic, this.bossSound];
         this.menuIcon = document.getElementById('menu-icon');
         this.gameMenu = document.getElementById('game-menu');
         this.controlModeBtn = document.getElementById('control-mode-button');
@@ -87,10 +89,12 @@ class EventListeners {
         this.changeControlMode = this.ui.controlModeBtn.addEventListener('click', () => {
             if(this.ui.controlMode === 'Keyboard') {
                 this.ui.controlMode = 'Mouse';
+                this.ui.canvas.style.cursor = 'crosshair';
                 this.ui.controlModeBtn.textContent = 'Use keyboard controls';
             } else {
                 this.ui.controlMode = 'Keyboard';
                 this.ui.controlModeBtn.textContent = 'Use mouse controls';
+                this.ui.canvas.style.cursor = 'default';
             }
         })
         this.muteAudio = this.ui.muteButton.addEventListener('click', () => {
@@ -101,6 +105,9 @@ class EventListeners {
                     this.ui.muteButton.textContent = 'Unmute Audio';
                 } else {
                     audio.muted = false;
+                    if(audio === this.ui.levelMusic) {
+                        audio.play();
+                    }
                     this.ui.muteButton.textContent = 'Mute Audio';
                 }
             });
