@@ -79,8 +79,14 @@ class Level1EnemyGenerator {
     AddFinalBoss() {
         if(this.player.enemiesDestroyed >= 10 && !this.ui.gameMenu.open && this.finalBossReleased === false) {
             this.finalBossReleased = true;
-            this.ui.bossMusic.volume = 0.2;
-            this.ui.bossMusic.play();
+            this.ui.levelMusic.pause();
+            this.ui.bossSound.volume = 0.2;
+            this.ui.bossSound.play().then(() => {
+                setTimeout(() => {
+                    this.ui.bossSound.pause();
+                    this.ui.levelMusic.play();
+                }, 2500)
+            }).catch((err) => {console.error(err)});
             clearInterval(this.addSmallEnemy1);
             clearInterval(this.addSmallEnemy2);
             clearInterval(this.addSmallEnemy3);
@@ -150,6 +156,9 @@ class Game {
         if(localStorage.getItem('Weapon Choice') !== null) {
             this.player.weaponChoice = JSON.parse(localStorage.getItem('Weapon Choice'));
         }
+        this.ui.levelMusic.volume = 0.1;
+        this.ui.levelMusic.loop = true;
+        this.ui.levelMusic.play();
     }
 }
 
