@@ -2,7 +2,7 @@ import { UserInterface, EventListeners } from './user-interface.js';
 import { PlayerClass, PlayerHealthBar, WeaponClass } from './player.js';
 import { Clouds, OceanSurface, Lightning } from './background.js';
 import { SmallEnemy1, SmallEnemy3, SmallEnemy4, SmallEnemy5 } from './small-enemies.js';
-import { LargeEnemy2 } from './large-enemies.js';
+import { LargeEnemy3 } from './large-enemies.js';
 import { SmallExplosion, LargeExplosion, LargeEMP } from './projectiles.js';
 
 class Level3EnemyGenerator {
@@ -128,11 +128,20 @@ class Level3EnemyGenerator {
     AddFinalBoss() {
         if(this.player.enemiesDestroyed >= 10 && !this.ui.gameMenu.open && this.finalBossReleased === false) {
             this.finalBossReleased = true;
+            this.ui.levelMusic.pause();
+            this.ui.bossSound.volume = 0.2;
+            this.ui.bossSound.play().then(() => {
+                setTimeout(() => {
+                    this.ui.bossSound.pause();
+                    this.ui.levelMusic.play();
+                }, 2500)
+            }).catch((err) => {console.error(err)});
             clearInterval(this.addSmallEnemy1);
             clearInterval(this.addSmallEnemy2);
             clearInterval(this.addSmallEnemy3);
             clearInterval(this.addSmallEnemy4);
-            this.EnemyArray.push(new LargeEnemy2(this, this.player, this.ui));
+            clearInterval(this.addSmallEnemy5);
+            this.EnemyArray.push(new LargeEnemy3(this, this.player, this.ui));
         }
         if(this.finalBossReleased) {
             if(this.finalBossDestroyed && !this.ui.missionCompleteMenu.open) {
@@ -210,6 +219,9 @@ class Game {
         if(localStorage.getItem('Weapon Choice') !== null) {
             this.player.weaponChoice = JSON.parse(localStorage.getItem('Weapon Choice'));
         }
+        this.ui.levelMusic.volume = 0.1;
+        this.ui.levelMusic.loop = true;
+        this.ui.levelMusic.play();
     }
 }
 
