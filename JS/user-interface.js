@@ -5,12 +5,9 @@ class UserInterface {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
         this.controlMode = 'Keyboard';
-        this.menuSound = new Audio;
-        this.menuSound.src = 'Audio/beep.wav';
-        this.bossSound = new Audio;
-        this.bossSound.src = 'Audio/boss-sound.wav';
-        this.levelMusic = new Audio;
-        this.levelMusic.src = 'Audio/level-music.ogg';
+        this.menuSound = new Audio('Audio/beep.wav');
+        this.bossSound = new Audio('Audio/boss-sound.wav');
+        this.levelMusic = new Audio('Audio/level-music.ogg');
         this.allAudio = [this.menuSound, this.levelMusic, this.bossSound];
         this.menuIcon = document.getElementById('menu-icon');
         this.gameMenu = document.getElementById('game-menu');
@@ -55,7 +52,12 @@ class EventListeners {
             } 
             if(event.code === 'KeyM') {
                 this.ui.menuSound.play().catch((error) => {console.error(error)});
-                this.ui.gameMenu.showModal();
+                if(!this.ui.gameMenu.open) {
+                    this.ui.gameMenu.showModal();
+                } else {
+                    this.ui.gameMenu.close();
+                }
+                
             }
         });
         this.hoverEvent = document.addEventListener('mousemove', (event) => {
