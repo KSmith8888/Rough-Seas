@@ -47,12 +47,12 @@ class Clouds {
         this.ui = userInterface;
         this.cloudArray = [];
         this.addCloud1 = setInterval(() => {
-            if(this.cloudArray.length < 12) {
+            if(this.cloudArray.length < 10 && !this.ui.gameMenu.open && !this.ui.missionCompleteMenu.open) {
                 this.cloudArray.push(new Cloud1(this.ui.canvas.width, Math.floor(Math.random() * 350), this.ui));
             }
         }, 15000);
         this.addCloud2 = setInterval(() => {
-            if(this.cloudArray.length < 12) {
+            if(this.cloudArray.length < 10 && !this.ui.gameMenu.open && !this.ui.missionCompleteMenu.open) {
                 this.cloudArray.push(new Cloud2(this.ui.canvas.width, Math.floor(Math.random() * 250), this.ui));
             }
         }, 20000);
@@ -122,7 +122,7 @@ class OceanSurface {
     }
     UpdatePosition() {
         if(this.x > (0 - this.ui.canvas.width)) {
-            this.x -= 1;
+            this.x -= .75;
         }else {
             this.x = 0;
         }
@@ -146,7 +146,6 @@ class Tornado {
         this.reachedMidway = false;
         this.offScreen = false;
     }
-    
     Draw() {
         if(this.alternateFrame) {
             if(this.frame < (this.imageArray.length - 1)) {
