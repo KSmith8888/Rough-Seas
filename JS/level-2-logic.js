@@ -16,29 +16,45 @@ class Level2EnemyGenerator {
         this.tornadoArray = [];
         this.finalBossReleased = false;
         this.finalBossDestroyed = false;
+        this.smallEnemy4Tutorial = false;
+        this.tornadoTutorial = false;
         this.addSmallEnemy1 = setInterval(() => {
-            if(this.EnemyArray.length < 15 && !this.ui.gameMenu.open) {
+            if(this.EnemyArray.length < 15 && !this.ui.gameMenu.open && !this.ui.tutorialModal.open) {
                 this.EnemyArray.push(new SmallEnemy1(this, this.player, this.ui));
             }
-        }, 20000);
+        }, 13000);
         this.addSmallEnemy3 = setInterval(() => {
-            if(this.EnemyArray.length < 15 && !this.ui.gameMenu.open) {
+            if(this.EnemyArray.length < 15 && !this.ui.gameMenu.open && !this.ui.tutorialModal.open) {
                 this.EnemyArray.push(new SmallEnemy3(this, this.player, this.ui));
             }
-        }, 10000);
+        }, 20000);
         this.addSmallEnemy4 = setInterval(() => {
-            if(this.EnemyArray.length < 15 && !this.ui.gameMenu.open) {
+            if(this.EnemyArray.length < 15 && !this.ui.gameMenu.open && !this.ui.tutorialModal.open) {
                 this.EnemyArray.push(new SmallEnemy4(this, this.player, this.ui));
+                if(!this.smallEnemy4Tutorial) {
+                    this.ui.DisplayTutorial('Watch out for SmallEnemy4. They move fast and will explode on impact causing significant damage. Anything caught in the explosion will be damaged.', 
+                    { 
+                        src: 'Images/Enemies/smallEnemy4.png',
+                        alt: 'A grey robotic flying enemy with a red orb in the center',
+                        width: 24,
+                        height: 20
+                    });
+                    this.smallEnemy4Tutorial = true;
+                }    
             }
-        }, 12000);
+        }, 10000);
         this.addTornado = setInterval(() => {
             const randomNum = Math.floor(Math.random() * 10);
-            if(this.tornadoArray.length < 15 && !this.ui.gameMenu.open) {
+            if(this.tornadoArray.length < 15 && !this.ui.gameMenu.open && !this.ui.tutorialModal.open) {
                 if(randomNum > 5) {
                     this.tornadoArray.push(new TornadoRight(this.ui, this.water));
                 } else {
                     this.tornadoArray.push(new TornadoLeft(this.ui, this.water));
                 }
+                if(!this.tornadoTutorial) {
+                    this.ui.DisplayTutorial("Tornados will periodically appear from either side, don't let them near you or they will cause massive damage.");
+                    this.tornadoTutorial = true;
+                }    
             }
         }, 18000);
     }
@@ -194,6 +210,7 @@ class Game {
         if(localStorage.getItem('Weapon Choice') !== null) {
             this.player.weaponChoice = JSON.parse(localStorage.getItem('Weapon Choice'));
         }
+        this.ui.canvas.style.background = 'linear-gradient(#1c1c1c, hsl(240, 70%, 10%, 95%))';
     }
 }
 
@@ -202,7 +219,7 @@ game.LoadSaveData();
 game.cloudGenerator.AddInitialClouds();
 
 function animationLoop() {
-    if(!game.ui.gameMenu.open && !game.ui.missionCompleteMenu.open) {
+    if(!game.ui.gameMenu.open && !game.ui.missionCompleteMenu.open && !game.ui.tutorialModal.open) {
         game.ui.ctx.clearRect(0, 0, game.ui.canvas.width, game.ui.canvas.height);
         game.cloudGenerator.ControlClouds();
         game.weapon.DrawWeapon();
