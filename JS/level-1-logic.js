@@ -14,6 +14,7 @@ class Level1EnemyGenerator {
         this.explosionArray = [];
         this.finalBossReleased = false;
         this.finalBossDestroyed = false;
+        this.showedFinalTutorial = false;
         this.addSmallEnemy1 = setInterval(() => {
             if(this.EnemyArray.length < 15 && !this.ui.gameMenu.open) {
                 this.EnemyArray.push(new SmallEnemy1(this, this.player, this.ui));
@@ -69,7 +70,7 @@ class Level1EnemyGenerator {
     CompleteLevel() {
         localStorage.setItem('Game Level', JSON.stringify(2));
         setTimeout(() => {
-            if(!this.ui.missionCompleteMenu.open) {
+            if(!this.ui.missionCompleteMenu.open && !this.ui.tutorialOpen) {
                 this.ui.missionCompleteMenu.showModal();
                 this.ui.damageStat = this.player.damageStat;
                 this.ui.armorStat = this.player.healthStat;
@@ -79,6 +80,7 @@ class Level1EnemyGenerator {
     AddFinalBoss() {
         if(this.player.enemiesDestroyed >= 10 && !this.ui.gameMenu.open && this.finalBossReleased === false) {
             this.finalBossReleased = true;
+            this.ui.DisplayTutorial('When the mission boss arrives, an alarm will sound. Defeat the boss to move onto the next mission.');
             this.ui.levelMusic.pause();
             this.ui.bossSound.volume = 0.2;
             this.ui.bossSound.play().then(() => {
@@ -94,6 +96,10 @@ class Level1EnemyGenerator {
         }
         if(this.finalBossReleased) {
             if(this.finalBossDestroyed) {
+                if(!this.showedFinalTutorial) {
+                    this.ui.DisplayTutorial('After completing a mission, you will select a weapon to use in the next stage and choose an upgrade.');
+                    this.showedFinalTutorial = true;
+                }
                 this.CompleteLevel();
             }
         }
@@ -156,8 +162,10 @@ class Game {
         if(localStorage.getItem('Weapon Choice') !== null) {
             this.player.weaponChoice = JSON.parse(localStorage.getItem('Weapon Choice'));
         }
+        //this.ui.gameMenu.append(this.ui.levelMusic);
         this.ui.levelMusic.volume = 0.1;
         this.ui.levelMusic.loop = true;
+        //this.ui.levelMusic.controls = true;
         this.ui.levelMusic.play();
     }
 }
@@ -167,7 +175,7 @@ game.LoadSaveData();
 game.cloudGenerator.AddInitialClouds();
 
 function animationLoop() {
-    if(!game.ui.gameMenu.open && !game.ui.missionCompleteMenu.open) {
+    if(!game.ui.gameMenu.open && !game.ui.missionCompleteMenu.open && !game.ui.tutorialModal.open) {
         game.ui.ctx.clearRect(0, 0, game.ui.canvas.width, game.ui.canvas.height);
         game.cloudGenerator.ControlClouds();
         game.skyline.ControlSkyline();
