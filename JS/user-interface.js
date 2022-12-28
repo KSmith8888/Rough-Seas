@@ -19,6 +19,20 @@ class UserInterface {
         this.missionCompleteForm = document.getElementById('mission-complete-form');
         this.armorStat = document.getElementById('armor-stat');
         this.damageStat = document.getElementById('damage-stat');
+        this.tutorialModal = document.getElementById('tutorial-modal');
+        this.closeTutorialBtn = document.getElementById('close-tutorial-button');
+        this.tutorialText = document.getElementById('tutorial-text');
+        this.tutorialImage = document.getElementById('tutorial-image');
+    }
+    DisplayTutorial(message, imageInfo) {
+        this.tutorialModal.showModal();
+        this.tutorialText.textContent = message;
+        if(imageInfo) {
+            this.tutorialImage.src = imageInfo.src;
+            this.tutorialImage.alt = imageInfo.alt;
+            this.tutorialImage.width = imageInfo.width;
+            this.tutorialImage.height = imageInfo.height;
+        }
     }
 }
 
@@ -140,6 +154,13 @@ class EventListeners {
                 localStorage.setItem('Damage Stat', JSON.stringify(this.player.damageStat));
             }
             this.player.StartNextMission();
+        });
+        this.closeTutorial = this.ui.closeTutorialBtn.addEventListener('click', () => {
+            this.ui.tutorialImage.src = 'Images/warning-icon.png';
+            this.ui.tutorialImage.alt = 'A large exclamation point on a red background';
+            this.ui.tutorialImage.width = 32;
+            this.ui.tutorialImage.height = 32;
+            this.ui.tutorialModal.close();
         });
     }
 }
