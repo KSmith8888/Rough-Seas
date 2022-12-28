@@ -115,3 +115,27 @@ body {
     width: 55px;
     height: 70px;
 }
+
+#tutorial-modal[open] {
+    width: 20vw;
+    min-height: 30vh;
+    background-color: rgb(151, 158, 148);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 2px solid black;
+    padding: 1.5em;
+}
+
+#close-tutorial-button {
+    width: 5em;
+    border: 1px solid black;
+    font-family: 'Courier New', Courier, monospace;
+    background-color: rgb(204, 205, 207);
+    cursor: pointer;
+    padding: .2em .5em;
+    margin: 1em .5em;
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 5px;
+}
