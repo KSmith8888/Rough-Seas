@@ -17,32 +17,49 @@ class Level3EnemyGenerator {
         this.lightningArray = [];
         this.finalBossReleased = false;
         this.finalBossDestroyed = false;
+        this.smallEnemy5Tutorial = false;
+        this.lightningTutorial = false;
         this.addSmallEnemy1 = setInterval(() => {
-            if(this.EnemyArray.length < 15 && !this.ui.gameMenu.open) {
+            if(this.EnemyArray.length < 15 && !this.ui.gameMenu.open && !this.ui.tutorialModal.open) {
                 this.EnemyArray.push(new SmallEnemy1(this, this.player, this.ui));
             }
         }, 20000);
         this.addSmallEnemy3 = setInterval(() => {
-            if(this.EnemyArray.length < 15 && !this.ui.gameMenu.open) {
+            if(this.EnemyArray.length < 15 && !this.ui.gameMenu.open && !this.ui.tutorialModal.open) {
                 this.EnemyArray.push(new SmallEnemy3(this, this.player, this.ui));
             }
         }, 10000);
         this.addSmallEnemy4 = setInterval(() => {
-            if(this.EnemyArray.length < 15 && !this.ui.gameMenu.open) {
+            if(this.EnemyArray.length < 15 && !this.ui.gameMenu.open && !this.ui.tutorialModal.open) {
                 this.EnemyArray.push(new SmallEnemy4(this, this.player, this.ui));
             }
         }, 12000);
         this.addSmallEnemy5 = setInterval(() => {
-            if(this.EnemyArray.length < 15 && !this.ui.gameMenu.open) {
+            if(this.EnemyArray.length < 15 && !this.ui.gameMenu.open && !this.ui.tutorialModal.open) {
                 this.EnemyArray.push(new SmallEnemy5(this, this.player, this.ui));
+            }
+            if(!this.smallEnemy5Tutorial) {
+                this.ui.DisplayTutorial('SmallEnemy5 creates an EMP discharge on impact. If your ship touches the explosion, it will be disabled and unable to move for a while!', { 
+                    src: 'Images/Enemies/smallEnemy5.png',
+                    alt: 'A grey robotic flying enemy with a blue orb in the center',
+                    width: 36,
+                    height: 24
+                });
+                this.smallEnemy5Tutorial = true;
             }
         }, 8000);
         this.addLightning = setInterval(() => {
-            const randomCloud = Math.floor(Math.random() * this.cloudGenerator.cloudArray.length)
-            const boltX = this.cloudGenerator.cloudArray[randomCloud].x + (this.cloudGenerator.cloudArray[randomCloud].width / 4);
-            const boltY = this.cloudGenerator.cloudArray[randomCloud].y + (this.cloudGenerator.cloudArray[randomCloud].height - 25);
-            this.lightningArray.push(new Lightning(this.ui, boltX, boltY));
-        }, 8000);
+            if(!this.ui.gameMenu.open && !this.ui.tutorialModal.open) {
+                const randomCloud = Math.floor(Math.random() * this.cloudGenerator.cloudArray.length)
+                const boltX = this.cloudGenerator.cloudArray[randomCloud].x + (this.cloudGenerator.cloudArray[randomCloud].width / 4);
+                const boltY = this.cloudGenerator.cloudArray[randomCloud].y + (this.cloudGenerator.cloudArray[randomCloud].height - 25);
+                this.lightningArray.push(new Lightning(this.ui, boltX, boltY));
+            }
+            if(!this.lightningTutorial) {
+                this.ui.DisplayTutorial('Be careful when under a low cloud, lightning bolts will cause damage on impact.');
+                this.lightningTutorial = true;
+            }
+        }, 16000);
     }
     Collision() {
         this.EnemyArray = this.EnemyArray.filter((ship) => {
@@ -133,7 +150,7 @@ class Level3EnemyGenerator {
             this.ui.bossSound.play().then(() => {
                 setTimeout(() => {
                     this.ui.bossSound.pause();
-                    this.ui.levelMusic.play();
+                    //this.ui.levelMusic.play();
                 }, 2500)
             }).catch((err) => {console.error(err)});
             clearInterval(this.addSmallEnemy1);
@@ -219,9 +236,7 @@ class Game {
         if(localStorage.getItem('Weapon Choice') !== null) {
             this.player.weaponChoice = JSON.parse(localStorage.getItem('Weapon Choice'));
         }
-        this.ui.levelMusic.volume = 0.1;
-        this.ui.levelMusic.loop = true;
-        this.ui.levelMusic.play();
+        this.ui.canvas.style.background = 'linear-gradient(#1c1c1c, hsl(240, 70%, 10%, 95%))';
     }
 }
 
@@ -230,7 +245,7 @@ game.LoadSaveData();
 game.cloudGenerator.AddInitialClouds();
 
 function animationLoop() {
-    if(!game.ui.gameMenu.open && !game.ui.missionCompleteMenu.open) {
+    if(!game.ui.gameMenu.open && !game.ui.missionCompleteMenu.open && !game.ui.tutorialModal.open) {
         game.ui.ctx.clearRect(0, 0, game.ui.canvas.width, game.ui.canvas.height);
         game.level3Generator.ControlLightning();
         game.cloudGenerator.ControlClouds();
