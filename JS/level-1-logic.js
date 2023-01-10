@@ -70,7 +70,7 @@ class Level1EnemyGenerator {
     CompleteLevel() {
         localStorage.setItem('Game Level', JSON.stringify(2));
         setTimeout(() => {
-            if(!this.ui.missionCompleteMenu.open && !this.ui.tutorialOpen) {
+            if(!this.ui.missionCompleteMenu.open && !this.ui.tutorialModal.open) {
                 this.ui.missionCompleteMenu.showModal();
                 this.ui.damageStat = this.player.damageStat;
                 this.ui.armorStat = this.player.healthStat;
@@ -166,7 +166,7 @@ class Game {
         this.ui.levelMusic.volume = 0.1;
         this.ui.levelMusic.loop = true;
         //this.ui.levelMusic.controls = true;
-        this.ui.levelMusic.play();
+        this.ui.levelMusic.play().catch((err) => { console.error(err) });
     }
 }
 
