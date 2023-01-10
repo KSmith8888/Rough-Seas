@@ -55,7 +55,7 @@ class LargeEnemy1 {
                 ) {
                     projectile.hit = true;
                     this.health -= (projectile.damage + this.player.damageStat);
-                    this.generator.explosionArray.push(new SmallExplosion(this.x, this.y, this.ui));
+                    this.generator.explosionArray.push(new SmallExplosion(projectile.x, projectile.y - (this.height / 2), this.ui));
                     if(this.health <= 0) {
                         this.destroyed = true;
                         this.generator.finalBossDestroyed = true;
@@ -121,7 +121,7 @@ class LargeEnemy2 {
                 ) {
                     projectile.hit = true;
                     this.health -= (projectile.damage + this.player.damageStat);
-                    this.generator.explosionArray.push(new SmallExplosion(this.x, this.y, this.ui));
+                    this.generator.explosionArray.push(new SmallExplosion(projectile.x, projectile.y - (this.height / 2), this.ui));
                     if(this.health <= 0) {
                         this.destroyed = true;
                         this.generator.finalBossDestroyed = true;
@@ -187,7 +187,7 @@ class LargeEnemy3 {
                 ) {
                     projectile.hit = true;
                     this.health -= (projectile.damage + this.player.damageStat);
-                    this.generator.explosionArray.push(new SmallExplosion(this.x, this.y, this.ui));
+                    this.generator.explosionArray.push(new SmallExplosion(projectile.x, projectile.y - (this.height / 2), this.ui));
                     if(this.health <= 0) {
                         this.destroyed = true;
                         this.generator.finalBossDestroyed = true;
