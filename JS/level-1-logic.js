@@ -16,17 +16,17 @@ class Level1EnemyGenerator {
         this.finalBossDestroyed = false;
         this.showedFinalTutorial = false;
         this.addSmallEnemy1 = setInterval(() => {
-            if(this.EnemyArray.length < 15 && !this.ui.gameMenu.open) {
+            if(this.EnemyArray.length < 15 && !this.ui.gameMenu.open && !this.ui.tutorialModal.open) {
                 this.EnemyArray.push(new SmallEnemy1(this, this.player, this.ui));
             }
         }, 20000);
         this.addSmallEnemy2 = setInterval(() => {
-            if(this.EnemyArray.length < 15 && !this.ui.gameMenu.open) {
+            if(this.EnemyArray.length < 15 && !this.ui.gameMenu.open && !this.ui.tutorialModal.open) {
                 this.EnemyArray.push(new SmallEnemy2(this, this.player, this.ui));
             }
         }, 10000);
         this.addSmallEnemy3 = setInterval(() => {
-            if(this.EnemyArray.length < 15 && !this.ui.gameMenu.open) {
+            if(this.EnemyArray.length < 15 && !this.ui.gameMenu.open && !this.ui.tutorialModal.open) {
                 this.EnemyArray.push(new SmallEnemy3(this, this.player, this.ui));
             }
         }, 12000);
@@ -168,6 +168,9 @@ class Game {
         //this.ui.levelMusic.controls = true;
         this.ui.levelMusic.play().catch((err) => { console.error(err) });
     }
+    DisplayInitialTutorial() {
+        this.ui.DisplayTutorial('Use the A and D keys to move the ship and the W key to stop. Use the left and right arrow keys to change the angle of the weapon and the up arrow to fire. You can open the menu by pressing the M key or clicking on the button in the top left corner. Have fun!');
+    }
 }
 
 const game = new Game();
@@ -194,3 +197,7 @@ function animationLoop() {
     requestAnimationFrame(animationLoop);
 }
 animationLoop();
+
+setTimeout(() => {
+    game.DisplayInitialTutorial();
+}, 1000);
