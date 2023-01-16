@@ -56,7 +56,7 @@ class Level2EnemyGenerator {
                     this.tornadoTutorial = true;
                 }    
             }
-        }, 18000);
+        }, 28000);
     }
     Collision() {
         this.EnemyArray = this.EnemyArray.filter((ship) => {
@@ -164,7 +164,7 @@ class Level2EnemyGenerator {
     }
     ControlExplosions() {
         this.explosionArray = this.explosionArray.filter((explosion) => {
-            if(explosion.activeFrames < 10) {
+            if(explosion.activeFrames < 15) {
                 return explosion;
             }
         });
