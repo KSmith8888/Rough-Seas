@@ -15,7 +15,7 @@
             <button class="menu-btn">Testing</button>
         </div>
         <div class="menu-row">
-            <button class="menu-btn">Testing</button>
+            <button id="open-layout-button" class="menu-btn">Control Layout</button>
             <button class="menu-btn">Testing</button>
         </div>
         <div class="menu-row">
@@ -26,6 +26,16 @@
             <button id="close-menu-button" class="menu-btn">Close Menu</button>
             <button id="exit-game-button" class="menu-btn">Exit Game</button>
         </div>
+    </dialog>
+    <dialog id="control-layout-modal">
+        <p>Keyboard Control Layout</p>
+        <ul>
+            <li>Press the "A" or "D" keys to move the ship to the left or right</li>
+            <li>Press the "W" key to stop the ship</li>
+            <li>Change the angle of the weapon by pressing the left and right arrow keys</li>
+            <li>Press the up arrow to fire the weapon</li>
+        </ul>
+        <button id="close-layout-button">Close</button>
     </dialog>
     <canvas id="canvas" autofocus><p>JavaScript is required to play this game, please turn on JavaScript.</p></canvas>
     <dialog id="mission-complete-menu">
