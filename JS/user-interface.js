@@ -23,6 +23,9 @@ class UserInterface {
         this.closeTutorialBtn = document.getElementById('close-tutorial-button');
         this.tutorialText = document.getElementById('tutorial-text');
         this.tutorialImage = document.getElementById('tutorial-image');
+        this.controlLayoutModal = document.getElementById('control-layout-modal');
+        this.openLayoutButton = document.getElementById('open-layout-button');
+        this.closeLayoutButton = document.getElementById('close-layout-button');
     }
     DisplayTutorial(message, imageInfo) {
         this.tutorialModal.showModal();
@@ -101,6 +104,12 @@ class EventListeners {
         this.openMenu = this.ui.menuIcon.addEventListener('click', () => {
             this.ui.menuSound.play().catch((error) => {console.error(error)});
             this.ui.gameMenu.showModal();
+        });
+        this.openControlLayout = this.ui.openLayoutButton.addEventListener('click', () => {
+            this.ui.controlLayoutModal.showModal();
+        });
+        this.closeControlLayout = this.ui.closeLayoutButton.addEventListener('click', () => {
+            this.ui.controlLayoutModal.close();
         });
         this.changeControlMode = this.ui.controlModeBtn.addEventListener('click', () => {
             if(this.ui.controlMode === 'Keyboard') {
