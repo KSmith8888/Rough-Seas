@@ -5,9 +5,12 @@ class UserInterface {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
         this.controlMode = 'Keyboard';
+        this.turnOffTutorials = false;
+        this.muteAllAudio = false;
         this.menuSound = new Audio('Audio/beep.wav');
         this.bossSound = new Audio('Audio/boss-sound.wav');
-        this.levelMusic = new Audio('Audio/level-music.ogg');
+        this.levelMusic = new Audio();
+        this.levelMusic.src = JSON.parse(localStorage.getItem('Level-Music')) || 'Audio/level-music.ogg';
         this.allAudio = [this.menuSound, this.levelMusic, this.bossSound];
         this.menuIcon = document.getElementById('menu-icon');
         this.gameMenu = document.getElementById('game-menu');
@@ -26,15 +29,18 @@ class UserInterface {
         this.controlLayoutModal = document.getElementById('control-layout-modal');
         this.openLayoutButton = document.getElementById('open-layout-button');
         this.closeLayoutButton = document.getElementById('close-layout-button');
+        this.toggleTutorialsButton = document.getElementById('toggle-tutorials-button');
     }
     DisplayTutorial(message, imageInfo) {
-        this.tutorialModal.showModal();
-        this.tutorialText.textContent = message;
-        if(imageInfo) {
-            this.tutorialImage.src = imageInfo.src;
-            this.tutorialImage.alt = imageInfo.alt;
-            this.tutorialImage.width = imageInfo.width;
-            this.tutorialImage.height = imageInfo.height;
+        if(!this.turnOffTutorials) {
+            this.tutorialModal.showModal();
+            this.tutorialText.textContent = message;
+            if(imageInfo) {
+                this.tutorialImage.src = imageInfo.src;
+                this.tutorialImage.alt = imageInfo.alt;
+                this.tutorialImage.width = imageInfo.width;
+                this.tutorialImage.height = imageInfo.height;
+            }
         }
     }
 }
@@ -111,32 +117,9 @@ class EventListeners {
         this.closeControlLayout = this.ui.closeLayoutButton.addEventListener('click', () => {
             this.ui.controlLayoutModal.close();
         });
-        this.changeControlMode = this.ui.controlModeBtn.addEventListener('click', () => {
-            if(this.ui.controlMode === 'Keyboard') {
-                this.ui.controlMode = 'Mouse';
-                this.ui.canvas.style.cursor = 'crosshair';
-                this.ui.controlModeBtn.textContent = 'Use keyboard controls';
-            } else {
-                this.ui.controlMode = 'Keyboard';
-                this.ui.controlModeBtn.textContent = 'Use mouse controls';
-                this.ui.canvas.style.cursor = 'default';
-            }
-        })
-        this.muteAudio = this.ui.muteButton.addEventListener('click', () => {
-            this.ui.allAudio.forEach((audio) => {
-                if(!audio.muted) {
-                    audio.muted = true;
-                    audio.pause();
-                    this.ui.muteButton.textContent = 'Unmute Audio';
-                } else {
-                    audio.muted = false;
-                    if(audio === this.ui.levelMusic) {
-                        audio.play();
-                    }
-                    this.ui.muteButton.textContent = 'Mute Audio';
-                }
-            });
-        });
+        this.ui.toggleTutorialsButton.addEventListener('click', () => { this.ToggleTutorials() });
+        this.ui.controlModeBtn.addEventListener('click', () => { this.ChangeControlMode() });
+        this.ui.muteButton.addEventListener('click', () => { this.MuteAudio() });
         this.closeMenu = this.ui.closeMenuBtn.addEventListener('click', () => {
             this.ui.gameMenu.close();
         });
@@ -171,6 +154,48 @@ class EventListeners {
             this.ui.tutorialImage.height = 32;
             this.ui.tutorialModal.close();
         });
+    }
+    MuteAudio() {
+        this.ui.allAudio.forEach((audio) => {
+            if(!audio.muted) {
+                audio.muted = true;
+                audio.pause();
+                this.ui.muteButton.textContent = 'Unmute Audio';
+                localStorage.setItem('Audio-Setting', JSON.stringify('Muted'));
+            } else {
+                audio.muted = false;
+                if(audio === this.ui.levelMusic) {
+                    audio.volume = 0.1;
+                    audio.play();
+                }
+                this.ui.muteButton.textContent = 'Mute Audio';
+                localStorage.setItem('Audio-Setting', JSON.stringify('Sound'));
+            }
+        });
+    }
+    ChangeControlMode() {
+        if(this.ui.controlMode === 'Keyboard') {
+            this.ui.controlMode = 'Mouse';
+            this.ui.canvas.style.cursor = 'crosshair';
+            this.ui.controlModeBtn.textContent = 'Use keyboard controls';
+            localStorage.setItem('Control-Setting', JSON.stringify('Mouse'));
+        } else {
+            this.ui.controlMode = 'Keyboard';
+            this.ui.controlModeBtn.textContent = 'Use mouse controls';
+            this.ui.canvas.style.cursor = 'default';
+            localStorage.setItem('Control-Setting', JSON.stringify('Keyboard'));
+        }
+    }
+    ToggleTutorials() {
+        if(!this.ui.turnOffTutorials) {
+            this.ui.turnOffTutorials = true;
+            this.ui.toggleTutorialsButton.textContent = 'Turn on tutorials';
+            localStorage.setItem('Tutorial-Setting', JSON.stringify('Disabled'));
+        } else {
+            this.ui.turnOffTutorials = false;
+            this.ui.toggleTutorialsButton.textContent = 'Turn off tutorials';
+            localStorage.setItem('Tutorial-Setting', JSON.stringify('Enabled'));
+        }
     }
 }
 
