@@ -97,6 +97,8 @@ class Level1EnemyGenerator {
         if(this.finalBossReleased) {
             if(this.finalBossDestroyed) {
                 if(!this.showedFinalTutorial) {
+                    this.ui.levelMusic.pause();
+                    localStorage.setItem('Level-Music', JSON.stringify('Audio/level-2-music.ogg'));
                     this.ui.DisplayTutorial('After completing a mission, you will select a weapon to use in the next stage and choose an upgrade.');
                     this.showedFinalTutorial = true;
                 }
@@ -161,6 +163,24 @@ class Game {
         }
         if(localStorage.getItem('Weapon Choice') !== null) {
             this.player.weaponChoice = JSON.parse(localStorage.getItem('Weapon Choice'));
+        }
+        if(localStorage.getItem('Audio-Setting') !== null) {
+            if(JSON.parse(localStorage.getItem('Audio-Setting')) === 'Muted') {
+                this.events.MuteAudio();
+                this.ui.muteAllAudio = true;
+            }
+        }
+        if(localStorage.getItem('Control-Setting') !== null) {
+            if(JSON.parse(localStorage.getItem('Control-Setting')) === 'Mouse') {
+                this.events.ChangeControlMode();
+                this.ui.controlMode = 'Mouse';
+            }
+        }
+        if(localStorage.getItem('Tutorial-Setting') !== null) {
+            if(JSON.parse(localStorage.getItem('Tutorial-Setting')) === 'Disabled') {
+                this.events.ToggleTutorials();
+                this.ui.turnOffTutorials = true;
+            }
         }
         //this.ui.gameMenu.append(this.ui.levelMusic);
         this.ui.levelMusic.volume = 0.1;
