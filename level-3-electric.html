@@ -1,122 +1,234 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="CSS/level-styles.css">
-    <script src="JS/level-3-logic.js"  type="module"></script>
-    <title>Level 3: Electric</title>
-</head>
-<body>
-    <button id="menu-icon" title="Open Menu"></button>
-    <dialog id="game-menu">
-        <div class="menu-row">
-            <button class="menu-btn">Testing</button>
-            <button class="menu-btn">Testing</button>
-        </div>
-        <div class="menu-row">
-            <button id="open-layout-button" class="menu-btn">Control Layout</button>
-            <button id="toggle-tutorials-button" class="menu-btn">Turn off tutorials</button>
-        </div>
-        <div class="menu-row">
-            <button id="control-mode-button" class="menu-btn">Use mouse controls</button>
-            <button id="mute-button" class="menu-btn">Mute Audio</button>
-        </div>
-        <div class="menu-row">
-            <button id="close-menu-button" class="menu-btn">Close Menu</button>
-            <button id="exit-game-button" class="menu-btn">Exit Game</button>
-        </div>
-    </dialog>
-    <dialog id="control-layout-modal">
-        <p>Keyboard Control Layout</p>
-        <ul>
-            <li>Press the "A" or "D" keys to move the ship to the left or right</li>
-            <li>Press the "W" key to stop the ship</li>
-            <li>Change the angle of the weapon by pressing the left and right arrow keys</li>
-            <li>Press the up arrow to fire the weapon</li>
-        </ul>
-        <button id="close-layout-button">Close</button>
-    </dialog>
-    <canvas id="canvas" autofocus><p>JavaScript is required to play this game, please turn on JavaScript.</p></canvas>
-    <dialog id="mission-complete-menu">
-        <p>Please select the weapon you would like to use for the next mission and which upgrade to unlock.</p>
-        <form id="mission-complete-form">
-            <fieldset>
-                <legend>Choose your weapon:</legend>
-                <div class="weapon-choice-container">
-                    <div class="weapon-select-container">
-                        <img src="Images/Cannon/cannonRight.png" alt="A pixelated red cannon" class="weapon-choice-image">
-                        <label for="selectCannon" class="weapon-choice-label">Cannon
-                            <input type="radio" name="weapon" value="Cannon" id="selectCannon">
-                        </label>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="CSS/level-styles.css" />
+        <script src="JS/level-3-logic.js" type="module"></script>
+        <title>Level 3: Electric</title>
+    </head>
+    <body>
+        <button id="menu-icon" title="Open Menu"></button>
+        <dialog id="game-menu">
+            <div class="menu-row">
+                <button id="open-layout-button" class="menu-btn">
+                    Control Layout
+                </button>
+                <button id="toggle-tutorials-button" class="menu-btn">
+                    Turn off tutorials
+                </button>
+            </div>
+            <div class="menu-row">
+                <button id="control-mode-button" class="menu-btn">
+                    Use mouse controls
+                </button>
+                <button id="mute-button" class="menu-btn">Mute Audio</button>
+            </div>
+            <div class="menu-row">
+                <button id="close-menu-button" class="menu-btn">
+                    Close Menu
+                </button>
+                <button id="exit-game-button" class="menu-btn">
+                    Exit Game
+                </button>
+            </div>
+        </dialog>
+        <dialog id="control-layout-modal">
+            <p>Keyboard Control Layout</p>
+            <ul>
+                <li>
+                    Press the "A" or "D" keys to move the ship to the left or
+                    right
+                </li>
+                <li>Press the "W" key to stop the ship</li>
+                <li>
+                    Change the angle of the weapon by pressing the left and
+                    right arrow keys
+                </li>
+                <li>Press the up arrow to fire the weapon</li>
+            </ul>
+            <button id="close-layout-button">Close</button>
+        </dialog>
+        <canvas id="canvas" autofocus
+            ><p>
+                JavaScript is required to play this game, please turn on
+                JavaScript.
+            </p></canvas
+        >
+        <dialog id="mission-complete-menu">
+            <p>
+                Please select the weapon you would like to use for the next
+                mission and which upgrade to unlock.
+            </p>
+            <form id="mission-complete-form">
+                <fieldset>
+                    <legend>Choose your weapon:</legend>
+                    <div class="weapon-choice-container">
+                        <div class="weapon-select-container">
+                            <img
+                                src="Images/Cannon/cannonRight.png"
+                                alt="A pixelated red cannon"
+                                class="weapon-choice-image"
+                            />
+                            <label
+                                for="selectCannon"
+                                class="weapon-choice-label"
+                                >Cannon
+                                <input
+                                    type="radio"
+                                    name="weapon"
+                                    value="Cannon"
+                                    id="selectCannon"
+                                />
+                            </label>
+                        </div>
+                        <div class="weapon-stats-container">
+                            <p>Weapon Stats</p>
+                            <label for="cannon-damage-bar">Damage:</label>
+                            <progress
+                                id="cannon-damage-bar"
+                                value="50"
+                                max="100"
+                            ></progress>
+                            <label for="cannon-fire-bar">Fire Rate:</label>
+                            <progress
+                                id="cannon-fire-bar"
+                                value="50"
+                                max="100"
+                            ></progress>
+                        </div>
                     </div>
-                    <div class="weapon-stats-container">
-                        <p>Weapon Stats</p>
-                        <label for="cannon-damage-bar">Damage:</label>
-                        <progress id="cannon-damage-bar" value="50" max="100"></progress>
-                        <label for="cannon-fire-bar">Fire Rate:</label>
-                        <progress id="cannon-fire-bar" value="50" max="100"></progress>
+                    <div class="weapon-choice-container">
+                        <div class="weapon-select-container">
+                            <img
+                                src="Images/Machine/machineLeft.png"
+                                alt="A pixelated green machine gun"
+                                class="weapon-choice-image"
+                            />
+                            <label
+                                for="selectMachine"
+                                class="weapon-choice-label"
+                                >Machine Gun
+                                <input
+                                    type="radio"
+                                    name="weapon"
+                                    value="Machine"
+                                    id="selectMachine"
+                                />
+                            </label>
+                        </div>
+                        <div class="weapon-stats-container">
+                            <p>Weapon Stats</p>
+                            <label for="machine-damage-bar">Damage:</label>
+                            <progress
+                                id="machine-damage-bar"
+                                value="30"
+                                max="100"
+                            ></progress>
+                            <label for="machine-fire-bar">Fire Rate:</label>
+                            <progress
+                                id="machine-fire-bar"
+                                value="80"
+                                max="100"
+                            ></progress>
+                        </div>
                     </div>
-                </div>
-                <div class="weapon-choice-container">
-                    <div class="weapon-select-container">
-                        <img src="Images/Machine/machineLeft.png" alt="A pixelated green machine gun" class="weapon-choice-image">
-                        <label for="selectMachine" class="weapon-choice-label">Machine Gun
-                            <input type="radio" name="weapon" value="Machine" id="selectMachine">
-                        </label>
+                    <div class="weapon-choice-container">
+                        <div class="weapon-select-container">
+                            <img
+                                src="Images/Rocket/launcherRight.png"
+                                alt="A pixelated blue rocket launcher"
+                                class="weapon-choice-image"
+                            />
+                            <label
+                                for="selectLauncher"
+                                class="weapon-choice-label"
+                                >Rocket Launcher
+                                <input
+                                    type="radio"
+                                    name="weapon"
+                                    value="Launcher"
+                                    id="selectLauncher"
+                                />
+                            </label>
+                        </div>
+                        <div class="weapon-stats-container">
+                            <p>Weapon Stats</p>
+                            <label for="launcher-damage-bar">Damage:</label>
+                            <progress
+                                id="launcher-damage-bar"
+                                value="80"
+                                max="100"
+                            ></progress>
+                            <label for="launcher-fire-bar">Fire Rate:</label>
+                            <progress
+                                id="launcher-fire-bar"
+                                value="30"
+                                max="100"
+                            ></progress>
+                        </div>
                     </div>
-                    <div class="weapon-stats-container">
-                        <p>Weapon Stats</p>
-                        <label for="machine-damage-bar">Damage:</label>
-                        <progress id="machine-damage-bar" value="30" max="100"></progress>
-                        <label for="machine-fire-bar">Fire Rate:</label>
-                        <progress id="machine-fire-bar" value="80" max="100"></progress>
+                </fieldset>
+                <fieldset>
+                    <legend>Choose your Upgrade:</legend>
+                    <div class="upgrade-option-container">
+                        <div class="armor-select-container">
+                            <img
+                                src="Images/shieldIcon.png"
+                                alt="A pixelated grey shield"
+                                id="shield-image"
+                            />
+                            <label for="selectArmor"
+                                >Armor + 10
+                                <input
+                                    type="radio"
+                                    name="upgrade"
+                                    value="Armor"
+                                    id="selectArmor"
+                                />
+                            </label>
+                        </div>
+                        <p>
+                            Your current armor stat is
+                            <span id="armor-stat">110</span>
+                        </p>
                     </div>
-                </div>
-                <div class="weapon-choice-container">
-                    <div class="weapon-select-container">
-                        <img src="Images/Rocket/launcherRight.png" alt="A pixelated blue rocket launcher" class="weapon-choice-image">
-                        <label for="selectLauncher" class="weapon-choice-label">Rocket Launcher
-                            <input type="radio" name="weapon" value="Launcher" id="selectLauncher">
-                        </label>
+                    <div class="upgrade-option-container">
+                        <div class="armor-select-container">
+                            <img
+                                src="Images/swordIcon.png"
+                                alt="A pixelated grey sword"
+                                id="sword-image"
+                            />
+                            <label for="selectDamage"
+                                >Damage + 5
+                                <input
+                                    type="radio"
+                                    name="upgrade"
+                                    value="Damage"
+                                    id="selectDamage"
+                                />
+                            </label>
+                        </div>
+                        <p>
+                            Your current damage stat is
+                            <span id="damage-stat">15</span>
+                        </p>
                     </div>
-                    <div class="weapon-stats-container">
-                        <p>Weapon Stats</p>
-                        <label for="launcher-damage-bar">Damage:</label>
-                        <progress id="launcher-damage-bar" value="80" max="100"></progress>
-                        <label for="launcher-fire-bar">Fire Rate:</label>
-                        <progress id="launcher-fire-bar" value="30" max="100"></progress>
-                    </div>
-                </div>
-            </fieldset>
-            <fieldset>
-                <legend>Choose your Upgrade:</legend>
-                <div class="upgrade-option-container">
-                    <div class="armor-select-container">
-                        <img src="Images/shieldIcon.png" alt="A pixelated grey shield" id="shield-image">
-                        <label for="selectArmor">Armor + 10
-                            <input type="radio" name="upgrade" value="Armor" id="selectArmor">
-                        </label>
-                    </div>
-                    <p>Your current armor stat is <span id="armor-stat">110</span></p>
-                </div>
-                <div class="upgrade-option-container">
-                    <div class="armor-select-container">
-                        <img src="Images/swordIcon.png" alt="A pixelated grey sword" id="sword-image">
-                        <label for="selectDamage">Damage + 5
-                            <input type="radio" name="upgrade" value="Damage" id="selectDamage">
-                        </label>
-                    </div>
-                    <p>Your current damage stat is <span id="damage-stat">15</span></p>
-                </div>
-            </fieldset>
-            <button type="submit">Begin Level 4</button>
-        </form>
-    </dialog>
-    <dialog id="tutorial-modal">
-        <img id="tutorial-image" src="./Images/warning-icon.png" alt="A large exclamation point on a red background" width="32" height="32">
-        <p id="tutorial-text"></p>
-        <button id="close-tutorial-button">Close</button>
-    </dialog>
-</body>
+                </fieldset>
+                <button type="submit" class="menu-btn">Begin Level 4</button>
+            </form>
+        </dialog>
+        <dialog id="tutorial-modal">
+            <img
+                id="tutorial-image"
+                src="./Images/warning-icon.png"
+                alt="A large exclamation point on a red background"
+                width="32"
+                height="32"
+            />
+            <p id="tutorial-text"></p>
+            <button id="close-tutorial-button">Close</button>
+        </dialog>
+    </body>
 </html>
