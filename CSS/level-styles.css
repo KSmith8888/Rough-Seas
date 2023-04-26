@@ -11,7 +11,7 @@ body {
 #menu-icon {
     width: 30px;
     height: 30px;
-    background-image: url('../Images/menu-icon.png');
+    background-image: url("../Images/menu-icon.png");
     background-size: cover;
     background-position: center;
     position: fixed;
@@ -20,7 +20,8 @@ body {
     z-index: 2;
 }
 
-#menu-icon:hover, #menu-icon:focus {
+#menu-icon:hover,
+#menu-icon:focus {
     border: 3px solid rgb(14, 14, 82);
 }
 
@@ -37,14 +38,21 @@ body {
 .menu-btn {
     width: 8em;
     border: 1px solid black;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: "Courier New", Courier, monospace;
     background-color: rgb(204, 205, 207);
     cursor: pointer;
-    padding: .2em .5em;
-    margin: 1em .5em;
+    padding: 0.2em 0.5em;
+    margin: 1em 0.5em;
     font-weight: 700;
     font-size: 1rem;
     border-radius: 5px;
+}
+
+.menu-btn:hover,
+.menu-btn:focus,
+#close-tutorial-button:hover,
+#close-tutorial-button:focus {
+    background-color: rgb(176, 178, 184);
 }
 
 #mission-complete-menu[open] {
@@ -54,7 +62,7 @@ body {
 }
 
 #mission-complete-form input {
-    margin: .5em 0;
+    margin: 0.5em 0;
 }
 
 #mission-complete-form fieldset {
@@ -70,7 +78,8 @@ body {
     border-bottom: 1px solid grey;
 }
 
-.weapon-select-container, .armor-select-container {
+.weapon-select-container,
+.armor-select-container {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -101,13 +110,14 @@ body {
     border-bottom: 1px solid grey;
 }
 
-#armor-stat, #damage-stat {
+#armor-stat,
+#damage-stat {
     display: block;
     font-size: 1.2rem;
 }
 
 #shield-image {
-    width: 50px; 
+    width: 50px;
     height: 64;
 }
 
@@ -130,11 +140,11 @@ body {
 #close-tutorial-button {
     width: 5em;
     border: 1px solid black;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: "Courier New", Courier, monospace;
     background-color: rgb(204, 205, 207);
     cursor: pointer;
-    padding: .2em .5em;
-    margin: 1em .5em;
+    padding: 0.2em 0.5em;
+    margin: 1em 0.5em;
     font-weight: 700;
     font-size: 1rem;
     border-radius: 5px;
